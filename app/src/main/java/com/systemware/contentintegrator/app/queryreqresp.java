@@ -3,8 +3,11 @@ package com.systemware.contentintegrator.app;
 /**
  * Created by john.williams on 5/27/2014.
  */
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -29,6 +32,10 @@ public class queryreqresp {
     static HttpClient httpclient = new DefaultHttpClient();
     static HttpPost httppost = new HttpPost("http://www.yoursite.com/");
 
+    static String query;
+    static String className;
+    static Context mContext;
+
     public static String getResult() {
         return result;
     }
@@ -37,12 +44,22 @@ public class queryreqresp {
         queryreqresp.result = result;
     }
 
+    public static Context getActivityContext() {
+        return mContext;
+    }
+
+    public static void setActivityContext(Context className) {
+        queryreqresp.mContext = mContext;
+    }
+
     protected static class ReqTask extends AsyncTask<String, Void, String> {
         static String query;
         static String className;
-        protected ReqTask(String query, String className){
+        static Context mContext;
+        protected ReqTask(String query, String className,Context mContext){
             setQuery(query);
             setClassName(className);
+            setActivityContext(mContext);
         }
 
         public static String getQuery() {
@@ -61,13 +78,20 @@ public class queryreqresp {
             ReqTask.className = className;
         }
 
+        ProgressDialog dialog;
+
+        @Override
+        protected void onPreExecute() {
+            //dialog = ProgressDialog.show(getActivityContext(),"Logging in...","Please Wait",false);
+        }
+
         @Override
         protected String doInBackground(String... args) {
             XmlParser xmlobj = new XmlParser();
             StringBuilder total = new StringBuilder();
             try {
                 HttpPost httptemp = new HttpPost(getQuery());//form http req string and assign to httppost
-                Log.d("Variable", "loginlogoff.java - httpstringcreate() result: " + getQuery());
+                Log.d("Variable", getClassName() + ".java - httpstringcreate() result: " + getQuery());
                 httppost = httptemp;
                 // Execute HTTP Post Request
                 HttpResponse response = httpclient.execute(httppost);
@@ -95,12 +119,25 @@ public class queryreqresp {
             if (!xmlobj.isXMLformat(total.toString())) {
                 Log.e("XMLFormatError", getClassName() + ".java - XML is malformed");
             }
+            Log.d("Message", "Right before reqTask returns...");
             return total.toString();
-
         }
+
+
+
         protected void onPostExecute(String result) {//check if resulting response is a well-formed XML file
-            Log.d("Variable", "Task Executed from" + this.getClass().getName() + " + result: " + result);
+
+            Log.d("Variable", "Task Executed from " + this.getClass().getName() + " + result: " + result);
             setResult(result);//store the result
+            loginlogoff liloobj = new loginlogoff(getActivityContext());
+            liloobj.isLoginSuccessful();//check if login worked
+            Log.d("Variable", "Was login successful? " + liloobj.getLogin_successful());
+            //synchronized (MainActivity.syncToken){
+                Toast.makeText(getActivityContext(), result, Toast.LENGTH_LONG).show();
+                //Log.d("Message", "Notification Sent!");
+                //MainActivity.syncToken.notifyAll();
+            //}
+
         }
     }
 }

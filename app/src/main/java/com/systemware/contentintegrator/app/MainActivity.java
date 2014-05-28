@@ -44,6 +44,7 @@ public class MainActivity extends Activity
     private CharSequence mTitle;
     Boolean logonResult = false;
     final loginlogoff liloobj = new loginlogoff(this);
+    final static Object syncToken = new Object();
 
 
     public Boolean getLogonResult() {
@@ -101,6 +102,7 @@ public class MainActivity extends Activity
                     e.printStackTrace();
                 }
             }
+
         });
 
         //Listener for Cancel Button
@@ -125,16 +127,13 @@ public class MainActivity extends Activity
                 (DrawerLayout)findViewById(R.id.drawer_layout)
         );
     }//end of oncreate
-
-
         // Initialize login GUI
-
 
     void logonMessage(){
         loginlogoff liloobj = new loginlogoff(MainActivity.this);
         liloobj.isLoginSuccessful();
-        setLogonResult(liloobj.getLogin_successful());
-        if (!liloobj.getLogin_successful()) {
+        setLogonResult(loginlogoff.getLogin_successful());
+        if (!loginlogoff.getLogin_successful()) {
             Toast.makeText(MainActivity.this, "Logon Failed", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(MainActivity.this, "Logon Successful", Toast.LENGTH_SHORT).show();
@@ -142,16 +141,22 @@ public class MainActivity extends Activity
     }
 
     public void login() throws InterruptedException, ExecutionException, TimeoutException {
-        queryreqresp.ReqTask reqobj = new queryreqresp.ReqTask(liloobj.httpstringcreate(), this.getClass().getName());
+        queryreqresp.ReqTask reqobj = new queryreqresp.ReqTask(liloobj.httpstringcreate(), this.getClass().getName(), MainActivity.this);
         if (reqobj.getStatus().equals(AsyncTask.Status.PENDING)) {//if task has not executed yet, execute
             Log.d("Message", "login() task status:" + reqobj.getStatus());
             reqobj.execute();
-            Log.d("Message", "login() task status:" + reqobj.getStatus());
             Log.d("Message", "login() task running...");
         }
+        //synchronized(syncToken) {
+            //Log.d("Message", "waiting for syncToken...");
+            Log.d("Message", "login() task status:" + reqobj.getStatus());
+            //syncToken.wait();
+            //Log.d("Message", "syncToken received");
+            //logonMessage();
+        //}
+
 
     }//end of login()
-
 
 
 
