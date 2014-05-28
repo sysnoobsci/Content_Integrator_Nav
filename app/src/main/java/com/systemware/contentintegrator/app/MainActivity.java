@@ -12,6 +12,7 @@ import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -23,8 +24,10 @@ import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 
 public class MainActivity extends Activity
@@ -39,18 +42,35 @@ public class MainActivity extends Activity
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
     private CharSequence mTitle;
+    Boolean logonResult = false;
+    final loginlogoff liloobj = new loginlogoff(this);
+
+
+    public Boolean getLogonResult() {
+        return logonResult;
+    }
+
+    public void setLogonResult(Boolean logonResult) {
+        this.logonResult = logonResult;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        // Create login Dialog
         final Dialog login = new Dialog(this);
-
-        // Set GUI of login screen
         login.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        super.onCreate(savedInstanceState);
+        // Create login Dialog
+        setContentView(R.layout.activity_main);
         login.setContentView(R.layout.login_dialog);
+
+        final EditText hostname = (EditText) login.findViewById(R.id.hostname);
+        final EditText domain = (EditText) login.findViewById(R.id.domain);
+        final EditText port = (EditText) login.findViewById(R.id.port);
+        final EditText username = (EditText) login.findViewById(R.id.username);
+        final EditText password = (EditText) login.findViewById(R.id.password);
+        final Button cancel = (Button) login.findViewById(R.id.cancel_button);
+        final Button loginButton = (Button) login.findViewById(R.id.login_button);
+        // Set GUI of login screen
 
         //Closes app if they try to back out of dialog
         login.setOnCancelListener(new DialogInterface.OnCancelListener() {
@@ -59,82 +79,79 @@ public class MainActivity extends Activity
                 finish();
             }
         });
-
-        // Initialize login GUI
-        final EditText hostname = (EditText)login.findViewById(R.id.hostname);
-        final EditText domain = (EditText)login.findViewById(R.id.domain);
-        final EditText port = (EditText)login.findViewById(R.id.port);
-        final EditText username = (EditText)login.findViewById(R.id.username);
-        final EditText password = (EditText)login.findViewById(R.id.password);
-        final Button cancel = (Button)login.findViewById(R.id.cancel_button);
-        final Button loginButton = (Button)login.findViewById(R.id.login_button);
-
         //Listener for login button
-        loginButton.setOnClickListener(new View.OnClickListener() {
+        loginButton.setOnClickListener(new View.OnClickListener(){
             @Override
-            public void onClick(View v) {
-                boolean check = false;
-                int portNum = 0;
-                String hostName = hostname.getText().toString();
-                if(hostName == ""){
-                    check = true;
-                }
-                String domainName = domain.getText().toString();
-                if(domainName == ""){
-                    check = true;
-                }
+            public void onClick (View v){
+                Log.d("Message", "Login button clicked");
+                loginlogoff liloobj = new loginlogoff(MainActivity.this);//passed in context of this activity
+                XmlParser xmlpobj = new XmlParser();
+                liloobj.setHostname(hostname.getText().toString());
+                liloobj.setDomain(domain.getText().toString());
+                liloobj.setPortnumber(Integer.parseInt(port.getText().toString()));
+                liloobj.setUsername(username.getText().toString());
+                liloobj.setPassword(password.getText().toString());
                 try {
-                portNum = Integer.parseInt(port.getText().toString());
-                }catch(NumberFormatException e){
-                    Toast.makeText(getApplicationContext(), "Port is invalid", Toast.LENGTH_SHORT).show();
-                    check = true;
-                }
-                String userName = username.getText().toString();
-                if(userName == ""){
-                    check = true;
-                }
-                String passWord = password.getText().toString();
-                if(passWord == ""){
-                    check = true;
-                }
-                String httpstr = "?action=logon&user=" + userName + "&password=" + passWord;
-
-                String httpreq = "http://" + hostName + domainName + ":" + portNum + "/ci" + "?action=logon&user=" + userName + "&password=" + passWord;
-
-                queryreqresp qobj = new queryreqresp();
-
-                queryreqresp.ReqTask reqobj = new queryreqresp.ReqTask(httpreq);
-                String loginRes = (qobj.getResult());//get result from query
-                if (loginRes.contains("<rc>0</rc><xrc>0</xrc><xsrc>0</xsrc>")) {
-                    Toast.makeText(getApplicationContext(), "Login Successful", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getApplicationContext(), "Login UnSuccessful", Toast.LENGTH_SHORT).show();
+                    login();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (TimeoutException e) {
+                    e.printStackTrace();
                 }
             }
         });
 
         //Listener for Cancel Button
-        cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
+        cancel.setOnClickListener(new View.OnClickListener(){
+              @Override
+              public void onClick (View v){
+                  finish();
+              }
         });
 
         // Make dialog box visible.
         login.show();
 
-
-
-        mNavigationDrawerFragment = (NavigationDrawerFragment)
+        mNavigationDrawerFragment=(NavigationDrawerFragment)
                 getFragmentManager().findFragmentById(R.id.navigation_drawer);
-        mTitle = getTitle();
+
+        mTitle=getTitle();
 
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
-                (DrawerLayout) findViewById(R.id.drawer_layout));
+                (DrawerLayout)findViewById(R.id.drawer_layout)
+        );
+    }//end of oncreate
+
+
+        // Initialize login GUI
+
+
+    void logonMessage(){
+        loginlogoff liloobj = new loginlogoff(MainActivity.this);
+        liloobj.isLoginSuccessful();
+        setLogonResult(liloobj.getLogin_successful());
+        if (!liloobj.getLogin_successful()) {
+            Toast.makeText(MainActivity.this, "Logon Failed", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(MainActivity.this, "Logon Successful", Toast.LENGTH_SHORT).show();
+        }
     }
+
+    public void login() throws InterruptedException, ExecutionException, TimeoutException {
+        queryreqresp.ReqTask reqobj = new queryreqresp.ReqTask(liloobj.httpstringcreate(), this.getClass().getName());
+        if (reqobj.getStatus().equals(AsyncTask.Status.PENDING)) {//if task has not executed yet, execute
+            Log.d("Message", "login() task status:" + reqobj.getStatus());
+            reqobj.execute();
+            Log.d("Message", "login() task status:" + reqobj.getStatus());
+            Log.d("Message", "login() task running...");
+        }
+
+    }//end of login()
+
 
 
 
@@ -194,44 +211,44 @@ public class MainActivity extends Activity
         return super.onOptionsItemSelected(item);
     }
 
+/**
+ * A placeholder fragment containing a simple view.
+ */
+public static class PlaceholderFragment extends Fragment {
     /**
-     * A placeholder fragment containing a simple view.
+     * The fragment argument representing the section number for this
+     * fragment.
      */
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
+    private static final String ARG_SECTION_NUMBER = "section_number";
 
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        public PlaceholderFragment() {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            return rootView;
-        }
-
-        @Override
-        public void onAttach(Activity activity) {
-            super.onAttach(activity);
-            ((MainActivity) activity).onSectionAttached(
-                    getArguments().getInt(ARG_SECTION_NUMBER));
-        }
+    /**
+     * Returns a new instance of this fragment for the given section
+     * number.
+     */
+    public static PlaceholderFragment newInstance(int sectionNumber) {
+        PlaceholderFragment fragment = new PlaceholderFragment();
+        Bundle args = new Bundle();
+        args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+        fragment.setArguments(args);
+        return fragment;
     }
+
+    public PlaceholderFragment() {
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        return rootView;
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        ((MainActivity) activity).onSectionAttached(
+                getArguments().getInt(ARG_SECTION_NUMBER));
+    }
+}
 
 }

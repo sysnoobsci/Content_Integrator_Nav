@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/ContentIntegrator.iml" filepath="$PROJECT_DIR$/ContentIntegrator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Content_Integrator_Nav.iml" filepath="$PROJECT_DIR$/Content_Integrator_Nav.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

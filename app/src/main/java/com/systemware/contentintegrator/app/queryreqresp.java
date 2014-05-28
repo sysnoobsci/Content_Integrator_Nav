@@ -39,10 +39,11 @@ public class queryreqresp {
 
     protected static class ReqTask extends AsyncTask<String, Void, String> {
         static String query;
-        protected ReqTask(String query){
+        static String className;
+        protected ReqTask(String query, String className){
             setQuery(query);
+            setClassName(className);
         }
-
 
         public static String getQuery() {
             return query;
@@ -50,6 +51,14 @@ public class queryreqresp {
 
         public static void setQuery(String query) {
             ReqTask.query = query;
+        }
+
+        public static String getClassName() {
+            return className;
+        }
+
+        public static void setClassName(String className) {
+            ReqTask.className = className;
         }
 
         @Override
@@ -82,9 +91,9 @@ public class queryreqresp {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-            Log.d("Variable", "Caller " + "Shit just got real" + ".java - total.toString() result: " + total.toString());
+            Log.d("Variable", "Caller " + getClassName() + ".java - total.toString() result: " + total.toString());
             if (!xmlobj.isXMLformat(total.toString())) {
-                Log.e("XMLFormatError", "Shit just got real" + ".java - XML is malformed");
+                Log.e("XMLFormatError", getClassName() + ".java - XML is malformed");
             }
             return total.toString();
 

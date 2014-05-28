@@ -38,6 +38,8 @@
         android:id="@+id/hostname"
         android:layout_below="@+id/separator"
         android:layout_centerHorizontal="true"
+        android:text="gardner"
+        android:textColor="@color/White"
         android:hint="Hostname"/>
 
     <EditText
@@ -47,6 +49,8 @@
         android:id="@+id/domain"
         android:layout_below="@+id/hostname"
         android:layout_centerHorizontal="true"
+        android:text="usa.systemware.com"
+        android:textColor="@color/White"
         android:hint="Domain"/>
 
     <EditText
@@ -57,6 +61,8 @@
         android:id="@+id/port"
         android:layout_below="@+id/domain"
         android:layout_centerHorizontal="true"
+        android:text="34544"
+        android:textColor="@color/White"
         android:hint="Port"/>
 
     <EditText
@@ -66,6 +72,8 @@
         android:id="@+id/username"
         android:layout_below="@+id/port"
         android:layout_centerHorizontal="true"
+        android:text="admin"
+        android:textColor="@color/White"
         android:hint="Username"/>
 
     <EditText
@@ -76,6 +84,8 @@
         android:id="@+id/password"
         android:layout_below="@+id/username"
         android:layout_centerHorizontal="true"
+        android:text="admin"
+        android:textColor="@color/White"
         android:hint="Password"/>
 
     <LinearLayout
