@@ -3,12 +3,10 @@ package com.systemware.contentintegrator.app;
 /**
  * Created by john.williams on 5/27/2014.
  */
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -22,7 +20,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Method;
 
 /**
  * Created by adrian.meraz on 5/20/2014.
@@ -135,7 +132,7 @@ public class queryreqresp{
             String tMessage = maobj.logonMessage();
             ToastMessageTask tmtask = new ToastMessageTask(getActContext(),tMessage);
             tmtask.execute();
-            MainActivity.login.dismiss();
+            maobj.dismissDialog();
         }
     }//end of ReqTask
 }

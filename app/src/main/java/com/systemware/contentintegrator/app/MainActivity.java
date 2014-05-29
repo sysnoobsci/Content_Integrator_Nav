@@ -3,17 +3,14 @@ package com.systemware.contentintegrator.app;
 import android.app.Activity;
 
 import android.app.ActionBar;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,12 +18,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Window;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
-import java.lang.reflect.Method;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -44,7 +38,7 @@ public class MainActivity extends Activity
      */
     private CharSequence mTitle;
     Boolean logonResult = false;
-    final Dialog login = new Dialog(MainActivity.this);
+    final Dialog loginDialog = new Dialog(MainActivity.this);
 
     static Context aContext;
 
@@ -66,33 +60,33 @@ public class MainActivity extends Activity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //final Dialog login = new Dialog(this);
-        login.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //final Dialog loginDialog = new Dialog(this);
+        loginDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
 
-        // Create login Dialog
+        // Create loginDialog Dialog
         setContentView(R.layout.activity_main);
-        login.setContentView(R.layout.login_dialog);
+        loginDialog.setContentView(R.layout.login_dialog);
         setaContext(MainActivity.this);
-        // Set GUI of login screen
-        final EditText hostname = (EditText) login.findViewById(R.id.hostname);
-        final EditText domain = (EditText) login.findViewById(R.id.domain);
-        final EditText port = (EditText) login.findViewById(R.id.port);
-        final EditText username = (EditText) login.findViewById(R.id.username);
-        final EditText password = (EditText) login.findViewById(R.id.password);
-        final Button cancel = (Button) login.findViewById(R.id.cancel_button);
-        final Button loginButton = (Button) login.findViewById(R.id.login_button);
+        // Set GUI of loginDialog screen
+        final EditText hostname = (EditText) loginDialog.findViewById(R.id.hostname);
+        final EditText domain = (EditText) loginDialog.findViewById(R.id.domain);
+        final EditText port = (EditText) loginDialog.findViewById(R.id.port);
+        final EditText username = (EditText) loginDialog.findViewById(R.id.username);
+        final EditText password = (EditText) loginDialog.findViewById(R.id.password);
+        final Button cancel = (Button) loginDialog.findViewById(R.id.cancel_button);
+        final Button loginButton = (Button) loginDialog.findViewById(R.id.login_button);
 
         // Make dialog box visible.
-        login.show();
+        loginDialog.show();
         //Closes app if they try to back out of dialog
-        login.setOnCancelListener(new DialogInterface.OnCancelListener() {
+        loginDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
                 finish();
             }
         });
-        //Listener for login button
+        //Listener for loginDialog button
         loginButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick (View v){
@@ -154,6 +148,10 @@ public class MainActivity extends Activity
         return toastMessage;
     }
 
+    void dismissDialog(){
+        loginDialog.dismiss();
+    }
+
     public void login() throws InterruptedException, ExecutionException, TimeoutException, NoSuchMethodException {
         Log.d("Variable", "getApplicationContext() value:" + getApplicationContext());
         Log.d("Variable", "aContext value:" + aContext);
@@ -162,12 +160,12 @@ public class MainActivity extends Activity
         queryreqresp.ReqTask reqobj = new queryreqresp.ReqTask(liloobj.httpstringcreate(),
                 this.getClass().getName(), getaContext());
         if (reqobj.getStatus().equals(AsyncTask.Status.PENDING)) {//if task has not executed yet, execute
-            Log.d("Message", "login() task status:" + reqobj.getStatus());
+            Log.d("Message", "loginDialog() task status:" + reqobj.getStatus());
             reqobj.execute();
-            Log.d("Message", "login() task running...");
+            Log.d("Message", "loginDialog() task running...");
         }
 
-    }//end of login()
+    }//end of loginDialog()
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
