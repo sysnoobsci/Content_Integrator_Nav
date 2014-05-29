@@ -3,6 +3,7 @@ package com.systemware.contentintegrator.app;
 /**
  * Created by john.williams on 5/27/2014.
  */
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -21,20 +22,22 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Method;
 
 /**
  * Created by adrian.meraz on 5/20/2014.
  */
-public class queryreqresp {
+public class queryreqresp{
 
-    static String result;
+    static String result = "No result";
 
     static HttpClient httpclient = new DefaultHttpClient();
     static HttpPost httppost = new HttpPost("http://www.yoursite.com/");
 
-    static String query;
-    static String className;
-    static Context mContext;
+    private static String query;
+    private static String className;
+    private static Context mContext;
+
 
     public static String getResult() {
         return result;
@@ -44,38 +47,38 @@ public class queryreqresp {
         queryreqresp.result = result;
     }
 
-    public static Context getActivityContext() {
+    public static String getQuery() {
+        return query;
+    }
+
+    public static void setQuery(String query) {
+        queryreqresp.query = query;
+    }
+
+    public static String getClassName() {
+        return className;
+    }
+
+    public static void setClassName(String className) {
+        queryreqresp.className = className;
+    }
+
+    public static Context getActContext() {
         return mContext;
     }
 
-    public static void setActivityContext(Context className) {
+    public static void setActContext(Context mContext) {
         queryreqresp.mContext = mContext;
     }
 
     protected static class ReqTask extends AsyncTask<String, Void, String> {
-        static String query;
-        static String className;
-        static Context mContext;
-        protected ReqTask(String query, String className,Context mContext){
+
+        protected ReqTask(String query, String className, Context context){
             setQuery(query);
             setClassName(className);
-            setActivityContext(mContext);
-        }
-
-        public static String getQuery() {
-            return query;
-        }
-
-        public static void setQuery(String query) {
-            ReqTask.query = query;
-        }
-
-        public static String getClassName() {
-            return className;
-        }
-
-        public static void setClassName(String className) {
-            ReqTask.className = className;
+            Log.d("Variable", "ReqTask context value: " + context);
+            setActContext(context);
+            Log.d("Variable", "ReqTask getActContext() value: " + getActContext());
         }
 
         ProgressDialog dialog;
@@ -125,19 +128,13 @@ public class queryreqresp {
 
 
 
-        protected void onPostExecute(String result) {//check if resulting response is a well-formed XML file
-
+        protected void onPostExecute(String result) {
+            MainActivity maobj = new MainActivity();
             Log.d("Variable", "Task Executed from " + this.getClass().getName() + " + result: " + result);
             setResult(result);//store the result
-            loginlogoff liloobj = new loginlogoff(getActivityContext());
-            liloobj.isLoginSuccessful();//check if login worked
-            Log.d("Variable", "Was login successful? " + liloobj.getLogin_successful());
-            //synchronized (MainActivity.syncToken){
-                Toast.makeText(getActivityContext(), result, Toast.LENGTH_LONG).show();
-                //Log.d("Message", "Notification Sent!");
-                //MainActivity.syncToken.notifyAll();
-            //}
-
+            String tMessage = maobj.logonMessage();
+            ToastMessageTask tmtask = new ToastMessageTask(getActContext(),tMessage);
+            tmtask.execute();
         }
-    }
+    }//end of ReqTask
 }

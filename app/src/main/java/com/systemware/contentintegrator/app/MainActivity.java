@@ -26,6 +26,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.lang.reflect.Method;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -43,9 +44,8 @@ public class MainActivity extends Activity
      */
     private CharSequence mTitle;
     Boolean logonResult = false;
-    final loginlogoff liloobj = new loginlogoff(this);
-    final static Object syncToken = new Object();
 
+    static Context aContext;
 
     public Boolean getLogonResult() {
         return logonResult;
@@ -55,15 +55,25 @@ public class MainActivity extends Activity
         this.logonResult = logonResult;
     }
 
+    public static Context getaContext() {
+        return aContext;
+    }
+
+    public static void setaContext(Context aContext) {
+        MainActivity.aContext = aContext;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         final Dialog login = new Dialog(this);
         login.requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
+
         // Create login Dialog
         setContentView(R.layout.activity_main);
         login.setContentView(R.layout.login_dialog);
-
+        setaContext(MainActivity.this);
+        // Set GUI of login screen
         final EditText hostname = (EditText) login.findViewById(R.id.hostname);
         final EditText domain = (EditText) login.findViewById(R.id.domain);
         final EditText port = (EditText) login.findViewById(R.id.port);
@@ -71,8 +81,9 @@ public class MainActivity extends Activity
         final EditText password = (EditText) login.findViewById(R.id.password);
         final Button cancel = (Button) login.findViewById(R.id.cancel_button);
         final Button loginButton = (Button) login.findViewById(R.id.login_button);
-        // Set GUI of login screen
 
+        // Make dialog box visible.
+        login.show();
         //Closes app if they try to back out of dialog
         login.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
@@ -100,6 +111,8 @@ public class MainActivity extends Activity
                     e.printStackTrace();
                 } catch (TimeoutException e) {
                     e.printStackTrace();
+                } catch (NoSuchMethodException e) {
+                    e.printStackTrace();
                 }
             }
 
@@ -113,8 +126,7 @@ public class MainActivity extends Activity
               }
         });
 
-        // Make dialog box visible.
-        login.show();
+
 
         mNavigationDrawerFragment=(NavigationDrawerFragment)
                 getFragmentManager().findFragmentById(R.id.navigation_drawer);
@@ -127,38 +139,36 @@ public class MainActivity extends Activity
                 (DrawerLayout)findViewById(R.id.drawer_layout)
         );
     }//end of oncreate
-        // Initialize login GUI
 
-    void logonMessage(){
+
+    String logonMessage(){
+        String toastMessage;
         loginlogoff liloobj = new loginlogoff(MainActivity.this);
         liloobj.isLoginSuccessful();
         setLogonResult(loginlogoff.getLogin_successful());
         if (!loginlogoff.getLogin_successful()) {
-            Toast.makeText(MainActivity.this, "Logon Failed", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(MainActivity.this, "Logon Successful", Toast.LENGTH_SHORT).show();
+            toastMessage = "Logon Failed";
         }
+        else {
+            toastMessage = "Logon Successful";
+        }
+        return toastMessage;
     }
 
-    public void login() throws InterruptedException, ExecutionException, TimeoutException {
-        queryreqresp.ReqTask reqobj = new queryreqresp.ReqTask(liloobj.httpstringcreate(), this.getClass().getName(), MainActivity.this);
+    public void login() throws InterruptedException, ExecutionException, TimeoutException, NoSuchMethodException {
+        Log.d("Variable", "getApplicationContext() value:" + getApplicationContext());
+        Log.d("Variable", "aContext value:" + aContext);
+        loginlogoff liloobj = new loginlogoff(MainActivity.this);
+
+        queryreqresp.ReqTask reqobj = new queryreqresp.ReqTask(liloobj.httpstringcreate(),
+                this.getClass().getName(), getaContext());
         if (reqobj.getStatus().equals(AsyncTask.Status.PENDING)) {//if task has not executed yet, execute
             Log.d("Message", "login() task status:" + reqobj.getStatus());
             reqobj.execute();
             Log.d("Message", "login() task running...");
         }
-        //synchronized(syncToken) {
-            //Log.d("Message", "waiting for syncToken...");
-            Log.d("Message", "login() task status:" + reqobj.getStatus());
-            //syncToken.wait();
-            //Log.d("Message", "syncToken received");
-            //logonMessage();
-        //}
-
 
     }//end of login()
-
-
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
