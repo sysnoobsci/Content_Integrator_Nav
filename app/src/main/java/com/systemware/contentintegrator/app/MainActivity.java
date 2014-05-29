@@ -44,6 +44,7 @@ public class MainActivity extends Activity
      */
     private CharSequence mTitle;
     Boolean logonResult = false;
+    final Dialog login = new Dialog(MainActivity.this);
 
     static Context aContext;
 
@@ -65,7 +66,7 @@ public class MainActivity extends Activity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        final Dialog login = new Dialog(this);
+        //final Dialog login = new Dialog(this);
         login.requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
 
@@ -125,8 +126,6 @@ public class MainActivity extends Activity
                   finish();
               }
         });
-
-
 
         mNavigationDrawerFragment=(NavigationDrawerFragment)
                 getFragmentManager().findFragmentById(R.id.navigation_drawer);

@@ -135,6 +135,7 @@ public class queryreqresp{
             String tMessage = maobj.logonMessage();
             ToastMessageTask tmtask = new ToastMessageTask(getActContext(),tMessage);
             tmtask.execute();
+            MainActivity.login.dismiss();
         }
     }//end of ReqTask
 }
