@@ -38,7 +38,7 @@
         android:id="@+id/hostname"
         android:layout_below="@+id/separator"
         android:layout_centerHorizontal="true"
-        android:text="gardner"
+        android:text="meraz"
         android:textColor="@color/White"
         android:hint="Hostname"/>
 
@@ -61,7 +61,7 @@
         android:id="@+id/port"
         android:layout_below="@+id/domain"
         android:layout_centerHorizontal="true"
-        android:text="34544"
+        android:text="31000"
         android:textColor="@color/White"
         android:hint="Port"/>
 
@@ -84,7 +84,7 @@
         android:id="@+id/password"
         android:layout_below="@+id/username"
         android:layout_centerHorizontal="true"
-        android:text="admin"
+        android:text="password1"
         android:textColor="@color/White"
         android:hint="Password"/>
 

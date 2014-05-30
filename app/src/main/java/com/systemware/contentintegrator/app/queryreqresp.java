@@ -94,6 +94,7 @@ public class queryreqresp{
                 Log.d("Variable", getClassName() + ".java - httpstringcreate() result: " + getQuery());
                 httppost = httptemp;
                 // Execute HTTP Post Request
+
                 HttpResponse response = httpclient.execute(httppost);
 
                 HttpEntity ht = response.getEntity();
