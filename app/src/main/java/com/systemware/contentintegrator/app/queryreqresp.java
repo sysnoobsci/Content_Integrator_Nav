@@ -126,13 +126,8 @@ public class queryreqresp{
 
 
         protected void onPostExecute(String result) {
-            MainActivity maobj = new MainActivity();
             Log.d("Variable", "Task Executed from " + this.getClass().getName() + " + result: " + result);
             setResult(result);//store the result
-            String tMessage = maobj.logonMessage();
-            ToastMessageTask tmtask = new ToastMessageTask(getActContext(),tMessage);
-            tmtask.execute();
-            maobj.dismissDialog();
         }
     }//end of ReqTask
 }

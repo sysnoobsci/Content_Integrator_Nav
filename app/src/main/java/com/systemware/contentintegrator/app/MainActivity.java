@@ -6,6 +6,7 @@ import android.app.ActionBar;
 import android.app.Dialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
@@ -37,10 +38,11 @@ public class MainActivity extends Activity
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
     private CharSequence mTitle;
-    Boolean logonResult = false;
-    final Dialog loginDialog = new Dialog(MainActivity.this);
 
+    Boolean logonResult = false;
     static Context aContext;
+
+    ProgressDialog progress;
 
     public Boolean getLogonResult() {
         return logonResult;
@@ -60,10 +62,10 @@ public class MainActivity extends Activity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //final Dialog loginDialog = new Dialog(this);
+        final Dialog loginDialog = new Dialog(this);
+
         loginDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
-
         // Create loginDialog Dialog
         setContentView(R.layout.activity_main);
         loginDialog.setContentView(R.layout.login_dialog);
@@ -91,7 +93,7 @@ public class MainActivity extends Activity
             @Override
             public void onClick (View v){
                 Log.d("Message", "Login button clicked");
-                loginlogoff liloobj = new loginlogoff(MainActivity.this);//passed in context of this activity
+                final loginlogoff liloobj = new loginlogoff(MainActivity.this);//passed in context of this activity
                 XmlParser xmlpobj = new XmlParser();
                 liloobj.setHostname(hostname.getText().toString());
                 liloobj.setDomain(domain.getText().toString());
@@ -100,6 +102,7 @@ public class MainActivity extends Activity
                 liloobj.setPassword(password.getText().toString());
                 try {
                     login();
+                    progress = ProgressDialog.show(aContext, "Logging in...", "Please Wait", true);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (ExecutionException e) {
@@ -109,6 +112,25 @@ public class MainActivity extends Activity
                 } catch (NoSuchMethodException e) {
                     e.printStackTrace();
                 }
+
+                new Thread(new Runnable() {
+
+                    public void run() {
+                        try {
+                            Thread.sleep(500);
+                            progress.dismiss();
+                            ToastMessageTask tmtask = new ToastMessageTask(aContext,logonMessage());
+                            tmtask.execute();
+                            Thread.sleep(2000);
+                            if(getLogonResult()){
+                                loginDialog.dismiss();
+                            }
+                        }
+                        catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
             }
 
         });
@@ -146,10 +168,6 @@ public class MainActivity extends Activity
             toastMessage = "Logon Successful";
         }
         return toastMessage;
-    }
-
-    void dismissDialog(){
-        loginDialog.dismiss();
     }
 
     public void login() throws InterruptedException, ExecutionException, TimeoutException, NoSuchMethodException {
