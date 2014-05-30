@@ -1,0 +1,93 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="com.systemware.contentintegrator.app.MainActivity$PlaceholderFragment">
+
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <TextView
+                android:id="@+id/section_label1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CI Server Name"
+                android:paddingRight="75dp" />
+
+            <TextView
+                android:id="@+id/section_label_column1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CI Server Name Value"/>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <TextView
+                android:id="@+id/section_label2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CI Version"
+                android:paddingRight="75dp"/>
+            <TextView
+                android:id="@+id/section_label_column2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CI Version Value"/>
+            </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <TextView
+                android:id="@+id/section_label3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CI Node Name"
+                android:paddingRight="75dp"/>
+
+            <TextView
+                android:id="@+id/section_label_column3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CI Node Name Value"/>
+
+            </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <TextView
+                android:id="@+id/section_label4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CI Features"
+                android:paddingRight="75dp"/>
+
+            <ScrollView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/scrollView"
+                android:layout_column="2"
+                android:text="CI Features Values"/>
+
+        </TableRow>
+
+
+
+    </TableLayout>
+
+</RelativeLayout>
