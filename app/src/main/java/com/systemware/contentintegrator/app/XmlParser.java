@@ -3,6 +3,9 @@ package com.systemware.contentintegrator.app;
 /**
  * Created by john.williams on 5/27/2014.
  */
+import android.util.Log;
+import android.util.Xml;
+
 import java.io.IOException;
 import java.io.StringReader;
 
@@ -14,6 +17,29 @@ import org.xmlpull.v1.XmlPullParserFactory;
  */
 public class XmlParser {
     private static Boolean is_xml = false;
+    String xmlstring = "";
+    String searchfor = "";
+
+    public XmlParser(String searchfor){
+        setSearchfor(searchfor);
+    }
+
+    public String getSearchfor() {
+        return searchfor;
+    }
+
+    public void setSearchfor(String searchfor) {
+        this.searchfor = searchfor;
+    }
+
+    public String getXmlstring() {
+        return xmlstring;
+    }
+
+    public void setXmlstring(String xmlstring) {
+        this.xmlstring = xmlstring;
+    }
+
     static StringBuilder total = new StringBuilder();
 
     public static Boolean getIs_xml() {
@@ -35,18 +61,19 @@ public class XmlParser {
         int eventType = xpp.getEventType();
         while (eventType != XmlPullParser.END_DOCUMENT) {
             if(eventType == XmlPullParser.START_DOCUMENT) {
-                total.append("Start document\n");
+                //total.append("Start document\n");
             } else if(eventType == XmlPullParser.START_TAG) {
-                total.append("Start tag "+xpp.getName()+"\n");
+                //total.append("Start tag "+xpp.getName()+"\n");
             } else if(eventType == XmlPullParser.END_TAG) {
-                total.append("End tag "+xpp.getName()+"\n");
+                //total.append("End tag "+xpp.getName()+"\n");
             } else if(eventType == XmlPullParser.TEXT) {
-                total.append("Text "+xpp.getText()+"\n");
+                total.append(xpp.getText());
+                //total.append("Text "+xpp.getText()+"\n");
             }
             eventType = xpp.next();
         }
-        total.append("End document\n");
-
+        //total.append("End document\n");
+        Log.d("Variable", "XML Contents: " + total.toString());
         return total.toString();//return parsed contents of XML
     }
     protected Boolean isXMLformat(String xmlstring){

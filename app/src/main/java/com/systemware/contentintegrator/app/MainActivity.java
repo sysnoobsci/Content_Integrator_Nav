@@ -23,6 +23,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
@@ -41,12 +42,22 @@ public class MainActivity extends Activity
      */
     private CharSequence mTitle;
     final static int LOGIN_THREAD_WAIT_TIME = 50;
+    final static int ABOUT_THREAD_WAIT_TIME = 50;
     Dialog loginDialog = null;
 
+    String loginQueryResult = "noresult";
     Boolean logonResult = false;
     static Context aContext;
     private Boolean first_open = true;//keeps track of if the app is opening for the first time to show the home screen
     ProgressDialog progress;
+
+    public String getLoginQueryResult() {
+        return loginQueryResult;
+    }
+
+    public void setLoginQueryResult(String loginQueryResult) {
+        this.loginQueryResult = loginQueryResult;
+    }
 
     public Boolean getLogonResult() {
         return logonResult;
@@ -71,6 +82,8 @@ public class MainActivity extends Activity
     public void setFirst_open(Boolean first_open) {
         this.first_open = first_open;
     }
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,7 +120,6 @@ public class MainActivity extends Activity
             public void onClick (View v){
                 Log.d("Message", "Login button clicked");
                 final loginlogoff liloobj = new loginlogoff(MainActivity.this);//passed in context of this activity
-                XmlParser xmlpobj = new XmlParser();
                 liloobj.setHostname(hostname.getText().toString());
                 liloobj.setDomain(domain.getText().toString());
                 liloobj.setPortnumber(Integer.parseInt(port.getText().toString()));
@@ -144,14 +156,17 @@ public class MainActivity extends Activity
                                 ToastMessageTask tmtask = new ToastMessageTask(aContext, logonMessage());
                                 tmtask.execute();
                                 Thread.sleep(2000);
-                                if (getLogonResult()) {
+                                if (getLogonResult()) {//if logon successful, do this
+                                    setLoginQueryResult(liloobj.getLogonRes());
                                     loginDialog.dismiss();
+                                    liloobj.setLogonRes("No result");//set it back to "No result" to clean it
                                 }
                             }
                         }
                         catch (InterruptedException e) {
                             e.printStackTrace();
                         }
+
                     }
                 }).start();
             }
@@ -209,12 +224,59 @@ public class MainActivity extends Activity
     }//end of login()
 
     public void aboutDialog(){
+        loginlogoff lobj = new loginlogoff(getApplicationContext());
+        String aboutInfoQuery = "http://" + lobj.getHostname() + "." +
+                lobj.getDomain() + ":" + lobj.getPortnumber() + "/ci";
+        final String aboutQuery = "?action=about";
+        final String aboutQueryFeatures = "?action=about&opt=features";
         final Dialog aboutDialog = new Dialog(this);
         String[] listFeature = {"I can do stuff", "Me too", "As can I", "can't stop", "won't stop"};
         aboutDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         // Create loginDialog Dialog
         aboutDialog.setContentView(R.layout.about_dialog);
+        TextView ciservername = (TextView) aboutDialog.findViewById(R.id.ci_servername_placeholder);
+        TextView civersion = (TextView) aboutDialog.findViewById(R.id.ci_version_placeholder);
+        TextView cinodename = (TextView) aboutDialog.findViewById(R.id.ci_nodename_placeholder);
         ListView featureList = (ListView)aboutDialog.findViewById(R.id.features_list);
+
+        queryreqresp.ReqTask reqobj = new queryreqresp.ReqTask(aboutInfoQuery + aboutQuery,
+                this.getClass().getName(), getaContext());
+        if (reqobj.getStatus().equals(AsyncTask.Status.PENDING)) {//if task has not executed yet, execute
+            Log.d("Message", "ReqTask task status:" + reqobj.getStatus());
+            reqobj.execute();
+            Log.d("Message", "ReqTask task running...");
+        }
+        new Thread(new Runnable() {
+
+            public void run() {
+                int count = 0;//keeps track of how many loops have been done, total time waiting is approx count times thread sleep time
+
+                    while(queryreqresp.getResult().equals("No result")&&count<10) {//waiting for a result to appear from login()
+                        Log.d("Message", "Waiting for result from about query... " + LOGIN_THREAD_WAIT_TIME * count + " ms");
+                        try {
+                            Thread.sleep(ABOUT_THREAD_WAIT_TIME);
+                        } catch (InterruptedException e1) {
+                            e1.printStackTrace();
+                        }
+                        count++;
+                    }
+                    if(count==10){
+                        ToastMessageTask tmtask = new ToastMessageTask(aContext,logonMessage() + "Error. About Request Timed Out\n"+
+                        "Check connection to CI server");
+                        tmtask.execute();
+                    }
+                    else{
+                        /*if(xobj.isXMLformat(queryreqresp.getResult())){
+                            ToastMessageTask tmtask = new ToastMessageTask(aContext,logonMessage() + "Error. Server sent invalid info back\n"+
+                                    "Check connection to CI server");
+                            tmtask.execute();
+                        }*/
+                        Log.d("Message","About request results: " + queryreqresp.getResult());
+                    }
+                }
+
+
+        }).start();
 
         ArrayAdapter adapter = new ArrayAdapter<String>(this,
                 R.layout.list_item, listFeature);
