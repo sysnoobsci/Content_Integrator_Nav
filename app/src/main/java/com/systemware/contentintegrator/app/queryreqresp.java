@@ -68,6 +68,10 @@ public class queryreqresp{
         queryreqresp.mContext = mContext;
     }
 
+    protected static void eraseQueryResults(){
+        setResult("No result");
+    }
+
     protected static class ReqTask extends AsyncTask<String, Void, String> {
 
         protected ReqTask(String query, String className, Context context){
@@ -87,7 +91,7 @@ public class queryreqresp{
 
         @Override
         protected String doInBackground(String... args) {
-            XmlParser xmlobj = new XmlParser();
+            XmlParser xmlobj = new XmlParser("");
             StringBuilder total = new StringBuilder();
             try {
                 HttpPost httptemp = new HttpPost(getQuery());//form http req string and assign to httppost

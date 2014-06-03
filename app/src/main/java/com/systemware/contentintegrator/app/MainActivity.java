@@ -159,7 +159,7 @@ public class MainActivity extends Activity
                                 if (getLogonResult()) {//if logon successful, do this
                                     setLoginQueryResult(liloobj.getLogonRes());
                                     loginDialog.dismiss();
-                                    liloobj.setLogonRes("No result");//set it back to "No result" to clean it
+                                    queryreqresp.eraseQueryResults();//set it back to "No result" to clean it
                                 }
                             }
                         }
