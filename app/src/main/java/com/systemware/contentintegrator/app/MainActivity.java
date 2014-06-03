@@ -19,8 +19,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Window;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
@@ -38,10 +40,12 @@ public class MainActivity extends Activity
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
     private CharSequence mTitle;
+    final static int LOGIN_THREAD_WAIT_TIME = 50;
+    Dialog loginDialog = null;
 
     Boolean logonResult = false;
     static Context aContext;
-
+    private Boolean first_open = true;//keeps track of if the app is opening for the first time to show the home screen
     ProgressDialog progress;
 
     public Boolean getLogonResult() {
@@ -60,9 +64,18 @@ public class MainActivity extends Activity
         MainActivity.aContext = aContext;
     }
 
+    public Boolean getFirst_open() {
+        return first_open;
+    }
+
+    public void setFirst_open(Boolean first_open) {
+        this.first_open = first_open;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        final Dialog loginDialog = new Dialog(this);
+        //final Dialog loginDialog = new Dialog(this);
+        loginDialog = new Dialog(this);
 
         loginDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
@@ -112,18 +125,28 @@ public class MainActivity extends Activity
                 } catch (NoSuchMethodException e) {
                     e.printStackTrace();
                 }
-
                 new Thread(new Runnable() {
 
                     public void run() {
+                        int count = 0;//keeps track of how many loops have been done, total time waiting is approx count times thread sleep time
                         try {
-                            Thread.sleep(500);
+                            while(queryreqresp.getResult().equals("No result")&&count<10){//waiting for a result to appear from login()
+                                Log.d("Message", "Waiting for result from attempted login... " + LOGIN_THREAD_WAIT_TIME*count + " ms");
+                                Thread.sleep(LOGIN_THREAD_WAIT_TIME);
+                                count++;
+                            }
                             progress.dismiss();
-                            ToastMessageTask tmtask = new ToastMessageTask(aContext,logonMessage());
-                            tmtask.execute();
-                            Thread.sleep(2000);
-                            if(getLogonResult()){
-                                loginDialog.dismiss();
+                            if(count==10){
+                                ToastMessageTask tmtask = new ToastMessageTask(aContext,logonMessage() + " - Request Timed Out");
+                                tmtask.execute();
+                            }
+                            else {
+                                ToastMessageTask tmtask = new ToastMessageTask(aContext, logonMessage());
+                                tmtask.execute();
+                                Thread.sleep(2000);
+                                if (getLogonResult()) {
+                                    loginDialog.dismiss();
+                                }
                             }
                         }
                         catch (InterruptedException e) {
@@ -183,27 +206,47 @@ public class MainActivity extends Activity
             Log.d("Message", "loginDialog() task running...");
         }
 
-    }//end of loginDialog()
+    }//end of login()
+
+    public void aboutDialog(){
+        final Dialog aboutDialog = new Dialog(this);
+        String[] listFeature = {"I can do stuff", "Me too", "As can I", "can't stop", "won't stop"};
+        aboutDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        // Create loginDialog Dialog
+        aboutDialog.setContentView(R.layout.about_dialog);
+        ListView featureList = (ListView)aboutDialog.findViewById(R.id.features_list);
+
+        ArrayAdapter adapter = new ArrayAdapter<String>(this,
+                R.layout.list_item, listFeature);
+
+        featureList.setAdapter(adapter);
+        aboutDialog.show();
+    }
+
 
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
-
-        Fragment fragment = new About_Fragment();
+        Log.d("Variable", "Value of argument position: " + position);
+        Fragment fragment = new Home_Fragment();
+        if(first_open){//if first time opening app, show home screen fragment
+            position = -1;
+            setFirst_open(false);
+        }
         FragmentManager fragmentManager = getFragmentManager();
         switch(position) {
             case 0:
-                fragment = new About_Fragment();
-                break;
-            case 1:
                 fragment = new Find_Fragment();
                 break;
-            case 2:
+            case 1:
                 fragment = new Tools_Fragment();
                 break;
-            case 3:
+            case 2:
                 fragment = new Admin_Fragment();
+                break;
+            default:
+                fragment = new Home_Fragment();
                 break;
         }
         fragmentManager.beginTransaction()
@@ -215,15 +258,12 @@ public class MainActivity extends Activity
     public void onSectionAttached(int number) {
         switch (number) {
             case 1:
-                mTitle = getString(R.string.title_section1);
-                break;
-            case 2:
                 mTitle = getString(R.string.title_section2);
                 break;
-            case 3:
+            case 2:
                 mTitle = getString(R.string.title_section3);
                 break;
-            case 4:
+            case 3:
                 mTitle = getString(R.string.title_section4);
                 break;
         }
@@ -259,6 +299,11 @@ public class MainActivity extends Activity
         if (id == R.id.action_settings) {
             return true;
         }
+        if(id == R.id.action_about){
+            aboutDialog();
+            return true;
+        }
+
         return super.onOptionsItemSelected(item);
     }
 

@@ -7,13 +7,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 /**
- * Created by The Bat Cave on 6/2/2014.
+ * Created by adrian.meraz on 6/3/2014.
  */
-public class About_Fragment extends Fragment {
+public class Home_Fragment extends Fragment {
 
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        View rootView = inflater .inflate(R.layout.about_fragment, container, false);
+        View rootView = inflater .inflate(R.layout.home_fragment, container, false);
         return rootView;
     }
 }
