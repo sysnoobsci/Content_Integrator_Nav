@@ -185,12 +185,30 @@ public class MainActivity extends Activity
 
     }//end of loginDialog()
 
+
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
+
+        Fragment fragment = new About_Fragment();
         FragmentManager fragmentManager = getFragmentManager();
+        switch(position) {
+            case 0:
+                fragment = new About_Fragment();
+                break;
+            case 1:
+                fragment = new Find_Fragment();
+                break;
+            case 2:
+                fragment = new Tools_Fragment();
+                break;
+            case 3:
+                fragment = new Admin_Fragment();
+                break;
+        }
         fragmentManager.beginTransaction()
-                .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
+                .replace(R.id.container, fragment)
+                //.replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
                 .commit();
     }
 
