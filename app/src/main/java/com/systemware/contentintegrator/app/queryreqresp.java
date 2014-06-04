@@ -91,7 +91,7 @@ public class queryreqresp{
 
         @Override
         protected String doInBackground(String... args) {
-            XmlParser xmlobj = new XmlParser("");
+            XmlParser xmlobj = new XmlParser();
             StringBuilder total = new StringBuilder();
             try {
                 HttpPost httptemp = new HttpPost(getQuery());//form http req string and assign to httppost

@@ -16,7 +16,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="40sp"
+            android:textSize="32sp"
             android:layout_margin="4dp"
             android:text="About"
             android:textColor="#999999"
@@ -31,105 +31,15 @@
         android:layout_below="@id/title_layout"
         android:id="@+id/separator"/>
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/title_layout"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/layout1">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="CI Server Name"
-            android:id="@+id/ci_servername_view"
-            android:layout_margin="4dp"
-            android:textColor="#999999"
-            android:gravity="center"/>
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="40dp"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Imaserver"
-            android:id="@+id/ci_servername_placeholder"
-            android:layout_margin="4dp"
-            android:textColor="#999999"
-            android:gravity="center"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/layout1"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/layout2">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="CI Version"
-            android:id="@+id/ci_version_view"
-            android:layout_margin="4dp"
-            android:textColor="#999999"
-            android:gravity="center"/>
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="40dp"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="4.10.0317 20131205"
-            android:id="@+id/ci_version_placeholder"
-            android:layout_margin="4dp"
-            android:textColor="#999999"
-            android:gravity="center"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/layout2"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/layout3">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="CI Node Name"
-            android:id="@+id/ci_nodename_view"
-            android:layout_margin="4dp"
-            android:textColor="#999999"
-            android:gravity="center"/>
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="40dp"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Imanode"
-            android:id="@+id/ci_nodename_placeholder"
-            android:layout_margin="4dp"
-            android:textColor="#999999"
-            android:gravity="center"/>
-    </LinearLayout>
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="32sp"
-        android:layout_margin="4dp"
         android:text="Features"
         android:textColor="#999999"
         android:id="@+id/features"
-        android:layout_below="@+id/layout3"/>
+        android:layout_below="@+id/tableLayout"
+        android:layout_alignParentStart="true" />
 
     <LinearLayout
         android:orientation="horizontal"
@@ -144,7 +54,95 @@
         android:layout_height="wrap_content"
         android:id="@+id/features_list"
         android:layout_below="@+id/separator1"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="4dp"/>
+        android:layout_alignParentStart="true" />
+
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="180dp"
+        android:id="@+id/tableLayout"
+        android:layout_below="@+id/separator"
+        android:layout_alignParentStart="true">
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="CI Server Name"
+                android:id="@+id/ci_servername_view"
+                android:layout_margin="4dp"
+                android:textColor="#999999"
+                android:gravity="center|left"
+                android:paddingRight="45dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:layout_height="50dp"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Imaserver"
+                android:id="@+id/ci_servername_placeholder"
+                android:layout_margin="4dp"
+                android:textColor="#999999"
+                android:gravity="center"/>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="CI Version"
+                android:id="@+id/ci_version_view"
+                android:layout_margin="4dp"
+                android:textColor="#999999"
+                android:gravity="center|left"
+                android:paddingRight="45dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:layout_height="50dp"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="4.10.0317 20131205"
+                android:id="@+id/ci_version_placeholder"
+                android:layout_margin="4dp"
+                android:textColor="#999999"
+                android:gravity="center"/>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="CI Node Name"
+                android:id="@+id/ci_nodename_view"
+                android:layout_margin="4dp"
+                android:textColor="#999999"
+                android:gravity="center|left"
+                android:paddingRight="35dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:layout_height="50dp"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Imanode"
+                android:id="@+id/ci_nodename_placeholder"
+                android:layout_margin="4dp"
+                android:textColor="#999999"
+                android:gravity="center"/>
+        </TableRow>
+    </TableLayout>
 
 </RelativeLayout>

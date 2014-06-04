@@ -25,6 +25,12 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -220,38 +226,39 @@ public class MainActivity extends Activity
             reqobj.execute();
             Log.d("Message", "loginDialog() task running...");
         }
-
     }//end of login()
 
-    public void aboutDialog(){
+    public void aboutDialog() throws InterruptedException {
         loginlogoff lobj = new loginlogoff(getApplicationContext());
+
         String aboutInfoQuery = "http://" + lobj.getHostname() + "." +
                 lobj.getDomain() + ":" + lobj.getPortnumber() + "/ci";
         final String aboutQuery = "?action=about";
         final String aboutQueryFeatures = "?action=about&opt=features";
         final Dialog aboutDialog = new Dialog(this);
-        String[] listFeature = {"I can do stuff", "Me too", "As can I", "can't stop", "won't stop"};
+        final List<String> listFeature = new ArrayList<String>();
         aboutDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         // Create loginDialog Dialog
         aboutDialog.setContentView(R.layout.about_dialog);
-        TextView ciservername = (TextView) aboutDialog.findViewById(R.id.ci_servername_placeholder);
-        TextView civersion = (TextView) aboutDialog.findViewById(R.id.ci_version_placeholder);
-        TextView cinodename = (TextView) aboutDialog.findViewById(R.id.ci_nodename_placeholder);
-        ListView featureList = (ListView)aboutDialog.findViewById(R.id.features_list);
 
-        queryreqresp.ReqTask reqobj = new queryreqresp.ReqTask(aboutInfoQuery + aboutQuery,
+        final TextView ciservername = (TextView) aboutDialog.findViewById(R.id.ci_servername_placeholder);
+        final TextView civersion = (TextView) aboutDialog.findViewById(R.id.ci_version_placeholder);
+        final TextView cinodename = (TextView) aboutDialog.findViewById(R.id.ci_nodename_placeholder);
+
+        final ListView featureList = (ListView)aboutDialog.findViewById(R.id.features_list);
+
+        queryreqresp.ReqTask reqobj = new queryreqresp.ReqTask(aboutInfoQuery + aboutQuery,//query about CI information(not features)
                 this.getClass().getName(), getaContext());
         if (reqobj.getStatus().equals(AsyncTask.Status.PENDING)) {//if task has not executed yet, execute
             Log.d("Message", "ReqTask task status:" + reqobj.getStatus());
             reqobj.execute();
             Log.d("Message", "ReqTask task running...");
         }
-        new Thread(new Runnable() {
-
+        final Thread cithread = new Thread(new Runnable() {
             public void run() {
+                final XmlParser xobj = new XmlParser();
                 int count = 0;//keeps track of how many loops have been done, total time waiting is approx count times thread sleep time
-
-                    while(queryreqresp.getResult().equals("No result")&&count<10) {//waiting for a result to appear from login()
+                    while(queryreqresp.getResult().equals("No result")&&count<10){//waiting for a result to appear from login()
                         Log.d("Message", "Waiting for result from about query... " + LOGIN_THREAD_WAIT_TIME * count + " ms");
                         try {
                             Thread.sleep(ABOUT_THREAD_WAIT_TIME);
@@ -260,32 +267,118 @@ public class MainActivity extends Activity
                         }
                         count++;
                     }
-                    if(count==10){
-                        ToastMessageTask tmtask = new ToastMessageTask(aContext,logonMessage() + "Error. About Request Timed Out\n"+
+                    if(count==20){
+                        ToastMessageTask tmtask = new ToastMessageTask(aContext,"Error. About Request Timed Out\n"+
                         "Check connection to CI server");
                         tmtask.execute();
                     }
                     else{
-                        /*if(xobj.isXMLformat(queryreqresp.getResult())){
-                            ToastMessageTask tmtask = new ToastMessageTask(aContext,logonMessage() + "Error. Server sent invalid info back\n"+
+                        try {
+                            xobj.parseXMLfunc(queryreqresp.getResult());
+                        } catch (XmlPullParserException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        if(!xobj.isXMLformat(queryreqresp.getResult())){//if xml response is not able to be parsed, show a Toast Message saying so
+                            ToastMessageTask tmtask = new ToastMessageTask(aContext, "Error. Server sent invalid info back\n" +
                                     "Check connection to CI server");
                             tmtask.execute();
-                        }*/
-                        Log.d("Message","About request results: " + queryreqresp.getResult());
+                        }
+                        else{
+                            MainActivity.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    List<String> listOfTextTags;
+                                    listOfTextTags = xobj.getTextTag();
+                                    ciservername.setText(listOfTextTags.get(3));
+                                    civersion.setText(listOfTextTags.get(4));
+                                    cinodename.setText(listOfTextTags.get(5));
+                                }
+                            });
+                        }
+                        Log.d("Message","About request results with xml parser applied: " + xobj.getXmlstring());
+                        xobj.clearXMLString();
                     }
                 }
+        });
 
+        queryreqresp.ReqTask reqobj2 = new queryreqresp.ReqTask(aboutInfoQuery + aboutQueryFeatures,//start a new query for CI features
+                this.getClass().getName(), getaContext());
+        if (reqobj2.getStatus().equals(AsyncTask.Status.PENDING)) {//if task has not executed yet, execute
+            Log.d("Message", "ReqTask2 task status:" + reqobj.getStatus());
+            reqobj2.execute();
+            Log.d("Message", "ReqTask2 task running...");
+        }
+        final Thread cifeaturesthread = new Thread(new Runnable() {
+            public void run() {
+                final XmlParser xobj = new XmlParser();
+                int count = 0;//keeps track of how many loops have been done, total time waiting is approx count times thread sleep time
+                while(queryreqresp.getResult().equals("No result")&&count<10){//waiting for a result to appear from login()
+                    Log.d("Message", "Waiting for result from about query... " + LOGIN_THREAD_WAIT_TIME * count + " ms");
+                    try {
+                        Thread.sleep(ABOUT_THREAD_WAIT_TIME);
+                    } catch (InterruptedException e1) {
+                        e1.printStackTrace();
+                    }
+                    count++;
+                }
+                if(count==20){
+                    ToastMessageTask tmtask = new ToastMessageTask(aContext,"Error. About Request Timed Out\n"+
+                            "Check connection to CI server");
+                    tmtask.execute();
+                }
+                else{
+                    try {
+                        xobj.parseXMLfunc(queryreqresp.getResult());
+                    } catch (XmlPullParserException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    if(!xobj.isXMLformat(queryreqresp.getResult())){//if xml response is not able to be parsed, show a Toast Message saying so
+                        ToastMessageTask tmtask = new ToastMessageTask(aContext, "Error. Server sent invalid info back\n" +
+                                "Check connection to CI server");
+                        tmtask.execute();
+                    }
+                    else{
+                        MainActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                List<String> listOfTextTags;
+                                listOfTextTags = xobj.getTextTag();
+                                Iterator<String> it = listOfTextTags.iterator();
+                                while(it.hasNext())
+                                {
+                                    if(!it.next().equals("0")){//avoid grabbing the return codes
+                                        listFeature.add(it.next());
+                                    }
+                                }
+                            }
+                        });
 
-        }).start();
+                    }
+                    Log.d("Message","About features request results with xml parser applied: " + xobj.getXmlstring());
+                    xobj.clearXMLString();
+                }
+            }
+        });
 
-        ArrayAdapter adapter = new ArrayAdapter<String>(this,
-                R.layout.list_item, listFeature);
+        }
+        List<Thread> threadslist;
+        threadslist.add(0)
+        ThreadSerializerTask task = new ThreadSerializerTask(threadslist);
+        task.();
 
+        /*cithread.start();
+        cithread.join();
+        cifeaturesthread.start();
+        cifeaturesthread.join();
+        */
+        ArrayAdapter adapter = new ArrayAdapter<String>(this,R.layout.list_item, listFeature);
         featureList.setAdapter(adapter);
         aboutDialog.show();
     }
-
-
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
@@ -362,7 +455,11 @@ public class MainActivity extends Activity
             return true;
         }
         if(id == R.id.action_about){
-            aboutDialog();
+            try {
+                aboutDialog();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             return true;
         }
 

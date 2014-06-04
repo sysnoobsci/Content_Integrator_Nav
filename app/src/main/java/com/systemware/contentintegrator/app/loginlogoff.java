@@ -33,7 +33,7 @@ import java.io.InputStreamReader;
 
 public class loginlogoff {
 
-    XmlParser xmlobj = new XmlParser("");
+    XmlParser xmlobj = new XmlParser();
 
     Context mContext;
 
