@@ -34,6 +34,7 @@ public class queryreqresp{
     private static String query;
     private static String className;
     private static Context mContext;
+    private static int taskID = 0;
 
 
     public static String getResult() {
@@ -68,18 +69,25 @@ public class queryreqresp{
         queryreqresp.mContext = mContext;
     }
 
-    protected static void eraseQueryResults(){
-        setResult("No result");
+    public static int getTaskID() {
+        return taskID;
     }
+
+    public static void setTaskID(int taskID) {
+        queryreqresp.taskID = taskID;
+    }
+
 
     protected static class ReqTask extends AsyncTask<String, Void, String> {
 
         protected ReqTask(String query, String className, Context context){
+            setTaskID(queryreqresp.taskID);//set unique ID for task
             setQuery(query);
             setClassName(className);
-            Log.d("Variable", "ReqTask context value: " + context);
+            Log.d("Variable", "ReqTask" + getTaskID() + " context value: " + context);
             setActContext(context);
-            Log.d("Variable", "ReqTask getActContext() value: " + getActContext());
+            Log.d("Variable", "ReqTask" + getTaskID() + " getActContext() value: " + getActContext());
+            taskID++;
         }
 
         ProgressDialog dialog;
@@ -124,7 +132,6 @@ public class queryreqresp{
             if (!xmlobj.isXMLformat(total.toString())) {
                 Log.e("XMLFormatError", getClassName() + ".java - XML is malformed");
             }
-            Log.d("Message", "Right before reqTask returns...");
             return total.toString();
         }
 

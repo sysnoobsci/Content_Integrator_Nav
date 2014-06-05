@@ -29,9 +29,12 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 
@@ -50,10 +53,10 @@ public class MainActivity extends Activity
     final static int LOGIN_THREAD_WAIT_TIME = 50;
     final static int ABOUT_THREAD_WAIT_TIME = 50;
     Dialog loginDialog = null;
+    Context maContext = MainActivity.this;
 
     String loginQueryResult = "noresult";
-    Boolean logonResult = false;
-    static Context aContext;
+
     private Boolean first_open = true;//keeps track of if the app is opening for the first time to show the home screen
     ProgressDialog progress;
 
@@ -65,22 +68,6 @@ public class MainActivity extends Activity
         this.loginQueryResult = loginQueryResult;
     }
 
-    public Boolean getLogonResult() {
-        return logonResult;
-    }
-
-    public void setLogonResult(Boolean logonResult) {
-        this.logonResult = logonResult;
-    }
-
-    public static Context getaContext() {
-        return aContext;
-    }
-
-    public static void setaContext(Context aContext) {
-        MainActivity.aContext = aContext;
-    }
-
     public Boolean getFirst_open() {
         return first_open;
     }
@@ -89,19 +76,24 @@ public class MainActivity extends Activity
         this.first_open = first_open;
     }
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //final Dialog loginDialog = new Dialog(this);
         loginDialog = new Dialog(this);
-
         loginDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
         // Create loginDialog Dialog
         setContentView(R.layout.activity_main);
         loginDialog.setContentView(R.layout.login_dialog);
-        setaContext(MainActivity.this);
+        //navigation drawer stuff
+        mNavigationDrawerFragment=(NavigationDrawerFragment)
+                getFragmentManager().findFragmentById(R.id.navigation_drawer);
+        mTitle=getTitle();
+        // Set up the drawer.
+        mNavigationDrawerFragment.setUp(
+                R.id.navigation_drawer,
+                (DrawerLayout)findViewById(R.id.drawer_layout)
+        );
         // Set GUI of loginDialog screen
         final EditText hostname = (EditText) loginDialog.findViewById(R.id.hostname);
         final EditText domain = (EditText) loginDialog.findViewById(R.id.domain);
@@ -125,15 +117,15 @@ public class MainActivity extends Activity
             @Override
             public void onClick (View v){
                 Log.d("Message", "Login button clicked");
-                final loginlogoff liloobj = new loginlogoff(MainActivity.this);//passed in context of this activity
+                final loginlogoff liloobj = new loginlogoff(maContext);//passed in context of this activity
                 liloobj.setHostname(hostname.getText().toString());
                 liloobj.setDomain(domain.getText().toString());
                 liloobj.setPortnumber(Integer.parseInt(port.getText().toString()));
                 liloobj.setUsername(username.getText().toString());
                 liloobj.setPassword(password.getText().toString());
                 try {
-                    login();
-                    progress = ProgressDialog.show(aContext, "Logging in...", "Please Wait", true);
+                    liloobj.login();
+                    progress = ProgressDialog.show(maContext, "Logging in...", "Please Wait", true);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (ExecutionException e) {
@@ -154,29 +146,25 @@ public class MainActivity extends Activity
                                 count++;
                             }
                             progress.dismiss();
-                            if(count==10){
-                                ToastMessageTask tmtask = new ToastMessageTask(aContext,logonMessage() + " - Request Timed Out");
-                                tmtask.execute();
+                            if(count==10){//request timed out - no response
+                                ToastMessageTask tstask = new ToastMessageTask(maContext,"Request timed out");
+                                tstask.execute();
                             }
                             else {
-                                ToastMessageTask tmtask = new ToastMessageTask(aContext, logonMessage());
-                                tmtask.execute();
+                                liloobj.logonMessage();
                                 Thread.sleep(2000);
-                                if (getLogonResult()) {//if logon successful, do this
+                                if (liloobj.getLogin_successful()) {//if logon successful, do this
                                     setLoginQueryResult(liloobj.getLogonRes());
                                     loginDialog.dismiss();
-                                    queryreqresp.eraseQueryResults();//set it back to "No result" to clean it
                                 }
                             }
                         }
                         catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-
                     }
                 }).start();
             }
-
         });
 
         //Listener for Cancel Button
@@ -187,51 +175,12 @@ public class MainActivity extends Activity
               }
         });
 
-        mNavigationDrawerFragment=(NavigationDrawerFragment)
-                getFragmentManager().findFragmentById(R.id.navigation_drawer);
-
-        mTitle=getTitle();
-
-        // Set up the drawer.
-        mNavigationDrawerFragment.setUp(
-                R.id.navigation_drawer,
-                (DrawerLayout)findViewById(R.id.drawer_layout)
-        );
     }//end of oncreate
 
+    public void aboutDialog() throws InterruptedException, ExecutionException, TimeoutException, IOException, XmlPullParserException {
+        loginlogoff lobj = new loginlogoff(maContext);
 
-    String logonMessage(){
-        String toastMessage;
-        loginlogoff liloobj = new loginlogoff(MainActivity.this);
-        liloobj.isLoginSuccessful();
-        setLogonResult(loginlogoff.getLogin_successful());
-        if (!loginlogoff.getLogin_successful()) {
-            toastMessage = "Logon Failed";
-        }
-        else {
-            toastMessage = "Logon Successful";
-        }
-        return toastMessage;
-    }
-
-    public void login() throws InterruptedException, ExecutionException, TimeoutException, NoSuchMethodException {
-        Log.d("Variable", "getApplicationContext() value:" + getApplicationContext());
-        Log.d("Variable", "aContext value:" + aContext);
-        loginlogoff liloobj = new loginlogoff(MainActivity.this);
-
-        queryreqresp.ReqTask reqobj = new queryreqresp.ReqTask(liloobj.httpstringcreate(),
-                this.getClass().getName(), getaContext());
-        if (reqobj.getStatus().equals(AsyncTask.Status.PENDING)) {//if task has not executed yet, execute
-            Log.d("Message", "loginDialog() task status:" + reqobj.getStatus());
-            reqobj.execute();
-            Log.d("Message", "loginDialog() task running...");
-        }
-    }//end of login()
-
-    public void aboutDialog() throws InterruptedException {
-        loginlogoff lobj = new loginlogoff(getApplicationContext());
-
-        String aboutInfoQuery = "http://" + lobj.getHostname() + "." +
+        final String aboutInfoQuery = "http://" + lobj.getHostname() + "." +
                 lobj.getDomain() + ":" + lobj.getPortnumber() + "/ci";
         final String aboutQuery = "?action=about";
         final String aboutQueryFeatures = "?action=about&opt=features";
@@ -247,15 +196,39 @@ public class MainActivity extends Activity
 
         final ListView featureList = (ListView)aboutDialog.findViewById(R.id.features_list);
 
+        List<String> listOfTextTags;
+        XmlParser xobj = new XmlParser();
+        XmlParser xobj2 = new XmlParser();
+
         queryreqresp.ReqTask reqobj = new queryreqresp.ReqTask(aboutInfoQuery + aboutQuery,//query about CI information(not features)
-                this.getClass().getName(), getaContext());
-        if (reqobj.getStatus().equals(AsyncTask.Status.PENDING)) {//if task has not executed yet, execute
-            Log.d("Message", "ReqTask task status:" + reqobj.getStatus());
-            reqobj.execute();
-            Log.d("Message", "ReqTask task running...");
+                this.getClass().getName(), maContext);
+        reqobj.execute();
+        reqobj.get(500,TimeUnit.MILLISECONDS);
+        xobj.parseXMLfunc(queryreqresp.getResult());
+        listOfTextTags = xobj.getTextTag();
+        ciservername.setText(listOfTextTags.get(3));
+        civersion.setText(listOfTextTags.get(4));
+        cinodename.setText(listOfTextTags.get(5));
+        queryreqresp.ReqTask reqobj2 = new queryreqresp.ReqTask(aboutInfoQuery + aboutQueryFeatures,//start a new query for CI features
+                this.getClass().getName(), maContext);
+        reqobj2.execute();
+        reqobj2.get(500,TimeUnit.MILLISECONDS);
+        xobj2.parseXMLfunc(queryreqresp.getResult());
+        List<String> listOfTextTags2;
+        listOfTextTags2 = xobj2.getTextTag();
+        Iterator<String> it = listOfTextTags2.iterator();
+        while(it.hasNext())
+        {
+            if(!it.next().equals("0")){//avoid grabbing the return codes
+                listFeature.add(it.next());
+            }
         }
-        final Thread cithread = new Thread(new Runnable() {
+        /*final Thread cithread = new Thread(new Runnable() {
             public void run() {
+                final queryreqresp.ReqTask reqobj = new queryreqresp.ReqTask(aboutInfoQuery + aboutQuery,//query about CI information(not features)
+                        this.getClass().getName(), maContext);
+                reqobj.execute();
+                Log.d("Message", "ReqTask task running...");
                 final XmlParser xobj = new XmlParser();
                 int count = 0;//keeps track of how many loops have been done, total time waiting is approx count times thread sleep time
                     while(queryreqresp.getResult().equals("No result")&&count<10){//waiting for a result to appear from login()
@@ -268,7 +241,7 @@ public class MainActivity extends Activity
                         count++;
                     }
                     if(count==20){
-                        ToastMessageTask tmtask = new ToastMessageTask(aContext,"Error. About Request Timed Out\n"+
+                        ToastMessageTask tmtask = new ToastMessageTask(maContext,"Error. About Request Timed Out\n"+
                         "Check connection to CI server");
                         tmtask.execute();
                     }
@@ -281,7 +254,7 @@ public class MainActivity extends Activity
                             e.printStackTrace();
                         }
                         if(!xobj.isXMLformat(queryreqresp.getResult())){//if xml response is not able to be parsed, show a Toast Message saying so
-                            ToastMessageTask tmtask = new ToastMessageTask(aContext, "Error. Server sent invalid info back\n" +
+                            ToastMessageTask tmtask = new ToastMessageTask(maContext, "Error. Server sent invalid info back\n" +
                                     "Check connection to CI server");
                             tmtask.execute();
                         }
@@ -303,15 +276,12 @@ public class MainActivity extends Activity
                 }
         });
 
-        queryreqresp.ReqTask reqobj2 = new queryreqresp.ReqTask(aboutInfoQuery + aboutQueryFeatures,//start a new query for CI features
-                this.getClass().getName(), getaContext());
-        if (reqobj2.getStatus().equals(AsyncTask.Status.PENDING)) {//if task has not executed yet, execute
-            Log.d("Message", "ReqTask2 task status:" + reqobj.getStatus());
-            reqobj2.execute();
-            Log.d("Message", "ReqTask2 task running...");
-        }
         final Thread cifeaturesthread = new Thread(new Runnable() {
             public void run() {
+                queryreqresp.ReqTask reqobj2 = new queryreqresp.ReqTask(aboutInfoQuery + aboutQueryFeatures,//start a new query for CI features
+                        this.getClass().getName(), maContext);
+                reqobj2.execute();
+                Log.d("Message", "ReqTask2 task running...");
                 final XmlParser xobj = new XmlParser();
                 int count = 0;//keeps track of how many loops have been done, total time waiting is approx count times thread sleep time
                 while(queryreqresp.getResult().equals("No result")&&count<10){//waiting for a result to appear from login()
@@ -324,7 +294,7 @@ public class MainActivity extends Activity
                     count++;
                 }
                 if(count==20){
-                    ToastMessageTask tmtask = new ToastMessageTask(aContext,"Error. About Request Timed Out\n"+
+                    ToastMessageTask tmtask = new ToastMessageTask(maContext,"Error. About Request Timed Out\n"+
                             "Check connection to CI server");
                     tmtask.execute();
                 }
@@ -337,7 +307,7 @@ public class MainActivity extends Activity
                         e.printStackTrace();
                     }
                     if(!xobj.isXMLformat(queryreqresp.getResult())){//if xml response is not able to be parsed, show a Toast Message saying so
-                        ToastMessageTask tmtask = new ToastMessageTask(aContext, "Error. Server sent invalid info back\n" +
+                        ToastMessageTask tmtask = new ToastMessageTask(maContext, "Error. Server sent invalid info back\n" +
                                 "Check connection to CI server");
                         tmtask.execute();
                     }
@@ -364,21 +334,18 @@ public class MainActivity extends Activity
             }
         });
 
-        }
-        List<Thread> threadslist;
-        threadslist.add(0)
-        ThreadSerializerTask task = new ThreadSerializerTask(threadslist);
-        task.();
+        List<Thread> threadslist = new ArrayList<Thread>();
 
-        /*cithread.start();
-        cithread.join();
-        cifeaturesthread.start();
-        cifeaturesthread.join();
+        threadslist.add(cithread);
+        threadslist.add(cifeaturesthread);
+        ThreadSerializerTask tstask = new ThreadSerializerTask(threadslist);
+        tstask.execute();
         */
+
         ArrayAdapter adapter = new ArrayAdapter<String>(this,R.layout.list_item, listFeature);
         featureList.setAdapter(adapter);
         aboutDialog.show();
-    }
+    }//end of about dialog
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
@@ -459,51 +426,20 @@ public class MainActivity extends Activity
                 aboutDialog();
             } catch (InterruptedException e) {
                 e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (TimeoutException e) {
+                e.printStackTrace();
+            } catch (XmlPullParserException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
-/**
- * A placeholder fragment containing a simple view.
- */
-public static class PlaceholderFragment extends Fragment {
-    /**
-     * The fragment argument representing the section number for this
-     * fragment.
-     */
-    private static final String ARG_SECTION_NUMBER = "section_number";
+}//end of MainActivity
 
-    /**
-     * Returns a new instance of this fragment for the given section
-     * number.
-     */
-    public static PlaceholderFragment newInstance(int sectionNumber) {
-        PlaceholderFragment fragment = new PlaceholderFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
-    public PlaceholderFragment() {
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        return rootView;
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        ((MainActivity) activity).onSectionAttached(
-                getArguments().getInt(ARG_SECTION_NUMBER));
-    }
-}
-
-}

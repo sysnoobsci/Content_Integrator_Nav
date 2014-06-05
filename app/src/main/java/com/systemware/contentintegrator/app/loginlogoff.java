@@ -23,7 +23,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 
 /**
@@ -33,12 +34,10 @@ import java.io.InputStreamReader;
 
 public class loginlogoff {
 
-    XmlParser xmlobj = new XmlParser();
-
     Context mContext;
 
     public loginlogoff(Context mContext) {
-        this.mContext = mContext;
+        loginlogoff.this.mContext = mContext;
     }
 
     private static String hostname = "gardner";
@@ -49,7 +48,6 @@ public class loginlogoff {
     private static String LogonRes = "";
     private static Boolean connection_state = false;
     private static Boolean login_successful = false;
-
 
     public String getHostname() {
         return hostname;
@@ -134,6 +132,31 @@ public class loginlogoff {
         } else {
             setLogin_successful(false);
         }
+    }
+
+    public void login() throws InterruptedException, ExecutionException, TimeoutException, NoSuchMethodException {
+        loginlogoff liloobj = new loginlogoff(mContext);
+
+        queryreqresp.ReqTask reqobj = new queryreqresp.ReqTask(liloobj.httpstringcreate(),
+                this.getClass().getName(), mContext);
+        if (reqobj.getStatus().equals(AsyncTask.Status.PENDING)) {//if task has not executed yet, execute
+            Log.d("Message", "loginDialog() task status:" + reqobj.getStatus());
+            reqobj.execute();
+            Log.d("Message", "loginDialog() task running...");
+        }
+    }//end of login()
+
+    void logonMessage(){
+        String toastMessage;
+        isLoginSuccessful();//check if login was successful
+        if (!getLogin_successful()) {
+            toastMessage = "Logon Failed";
+        }
+        else {
+            toastMessage = "Logon Successful";
+        }
+        ToastMessageTask tmtask = new ToastMessageTask(mContext,toastMessage);
+        tmtask.execute();
     }
 
     private void isNetworkAvailable() {

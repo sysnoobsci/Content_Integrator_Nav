@@ -18,7 +18,7 @@ import org.xmlpull.v1.XmlPullParserFactory;
  * Created by adrian.meraz on 5/16/2014.
  */
 public class XmlParser {
-    private static Boolean is_xml = false;
+    private Boolean is_xml = false;
     private String xmlstring = "";
 
     private final static String EMPTY_STRING = "";
@@ -40,7 +40,7 @@ public class XmlParser {
     }
 
     public void setIs_xml(Boolean is_xml) {
-        XmlParser.is_xml = is_xml;
+        this.is_xml = is_xml;
     }
 
     public List<String> getTextTag() {
@@ -55,7 +55,7 @@ public class XmlParser {
             throws XmlPullParserException, IOException
 
     {
-        List<String> listOfTextTags = new ArrayList<String>();
+        List<String> listOfTextTags = new ArrayList<String>();//a list contain all the text inside XML tags
         XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
         factory.setNamespaceAware(true);
         XmlPullParser xpp = factory.newPullParser();
@@ -72,13 +72,12 @@ public class XmlParser {
                 //total.append("End tag "+xpp.getName()+"\n");
             } else if(eventType == XmlPullParser.TEXT) {
                 listOfTextTags.add(xpp.getText());
-                total.append(xpp.getText());
+                total.append(xpp.getText() + ",");
                 //total.append("Text "+xpp.getText()+"\n");
             }
             eventType = xpp.next();
         }
         //total.append("End document\n");
-        Log.d("Variable", "XML Contents: " + total.toString());
         setTextTag(listOfTextTags);
         setXmlstring(total.toString());
         return total.toString();//return parsed contents of XML
@@ -87,8 +86,6 @@ public class XmlParser {
     public void clearXMLString(){
         setXmlstring(EMPTY_STRING);
     }
-
-
 
     public String findTagText(String tag){
         String tagText = "";
