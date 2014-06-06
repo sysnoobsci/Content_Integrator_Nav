@@ -115,7 +115,7 @@ public class MainActivity extends Activity
 
                 new Thread(new Runnable() {
                     public void run() {
-                        queryreqresp.ReqTask reqobj = new queryreqresp.ReqTask(liloobj.httpstringcreate(),//send login query to CI via asynctask
+                        final ReqTask reqobj = new ReqTask(liloobj.httpstringcreate(),//send login query to CI via asynctask
                                 this.getClass().getName(), maContext);
                         try {
                             reqobj.execute().get(LOGIN_TIMEOUT, TimeUnit.MILLISECONDS);
@@ -133,8 +133,8 @@ public class MainActivity extends Activity
                             public void run() {
                                 progress.dismiss();
                                 loginlogoff lobj = new loginlogoff(maContext);
-                                lobj.isLoginSuccessful();//check if login was successful
-                                lobj.logonMessage();//show status of login
+                                lobj.isLoginSuccessful(reqobj);//check if login was successful
+                                lobj.logonMessage(reqobj);//show status of login
                                 if(lobj.getLogin_successful()){//if login is true,dismiss login screen
                                     loginDialog.dismiss();
                                 }
@@ -179,15 +179,15 @@ public class MainActivity extends Activity
                 final XmlParser xobj = new XmlParser();
                 final XmlParser xobj2 = new XmlParser();
 
-                queryreqresp.ReqTask reqobj = new queryreqresp.ReqTask(targetCIQuery + aboutQuery,//query about CI information(not features)
+                ReqTask reqobj = new ReqTask(targetCIQuery + aboutQuery,//query about CI information(not features)
                         this.getClass().getName(), maContext);
-                queryreqresp.ReqTask reqobj2 = new queryreqresp.ReqTask(targetCIQuery + aboutQueryFeatures,//start a new query for CI features
+                ReqTask reqobj2 = new ReqTask(targetCIQuery + aboutQueryFeatures,//start a new query for CI features
                         this.getClass().getName(), maContext);
                 try {
                     reqobj.execute().get(REQUEST_TIMEOUT,TimeUnit.MILLISECONDS);//wait for reqobj to finish before continuing
-                    xobj.parseXMLfunc(queryreqresp.getResult());//parse result from query
+                    xobj.parseXMLfunc(reqobj.getResult());//parse result from query
                     reqobj2.execute().get(REQUEST_TIMEOUT,TimeUnit.MILLISECONDS);//wait for reqobj2 to finish before continuing
-                    xobj2.parseXMLfunc(queryreqresp.getResult());
+                    xobj2.parseXMLfunc(reqobj2.getResult());
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (ExecutionException e) {

@@ -124,9 +124,8 @@ public class loginlogoff {
         return httpreq;
     }
 
-    protected void isLoginSuccessful() {
-        queryreqresp qobj = new queryreqresp();
-        setLogonRes(qobj.getResult());//get result from query
+    protected void isLoginSuccessful(ReqTask robj) {
+        setLogonRes(robj.getResult());//get result from query
         if (getLogonRes().contains("<rc>0</rc><xrc>0</xrc><xsrc>0</xsrc>")) {
             setLogin_successful(true);
         } else {
@@ -134,9 +133,9 @@ public class loginlogoff {
         }
     }
 
-    void logonMessage(){
+    void logonMessage(ReqTask robj){
         String toastMessage;
-        isLoginSuccessful();//check if login was successful
+        isLoginSuccessful(robj);//check if login was successful
         if (!getLogin_successful()) {
             toastMessage = "Logon Failed.";
         }

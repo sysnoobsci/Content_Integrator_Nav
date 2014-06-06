@@ -24,73 +24,68 @@ import java.io.InputStreamReader;
 /**
  * Created by adrian.meraz on 5/20/2014.
  */
-public class queryreqresp{
 
-    static String result = "No result";
+    class ReqTask extends AsyncTask<String, Void, String> {
 
-    static HttpClient httpclient = new DefaultHttpClient();
-    static HttpPost httppost = new HttpPost("http://www.yoursite.com/");
+        String result = "No result";
 
-    private static String query;
-    private static String className;
-    private static Context mContext;
-    private static int taskID = 0;
+        HttpClient httpclient = new DefaultHttpClient();
+        HttpPost httppost = new HttpPost("http://www.yoursite.com/");
 
-
-    public static String getResult() {
-        return result;
-    }
-
-    public static void setResult(String result) {
-        queryreqresp.result = result;
-    }
-
-    public static String getQuery() {
-        return query;
-    }
-
-    public static void setQuery(String query) {
-        queryreqresp.query = query;
-    }
-
-    public static String getClassName() {
-        return className;
-    }
-
-    public static void setClassName(String className) {
-        queryreqresp.className = className;
-    }
-
-    public static Context getActContext() {
-        return mContext;
-    }
-
-    public static void setActContext(Context mContext) {
-        queryreqresp.mContext = mContext;
-    }
-
-    public static int getTaskID() {
-        return taskID;
-    }
-
-    public static void setTaskID(int taskID) {
-        queryreqresp.taskID = taskID;
-    }
+        private String query;
+        private String className;
+        private Context mContext;
+        private static int taskID = 0;
 
 
-    protected static class ReqTask extends AsyncTask<String, Void, String> {
+        public String getResult() {
+            return result;
+        }
 
-        protected ReqTask(String query, String className, Context context){
-            setTaskID(queryreqresp.taskID);//set unique ID for task
+        public void setResult(String result) {
+            this.result = result;
+        }
+
+        public String getQuery() {
+            return query;
+        }
+
+        public void setQuery(String query) {
+            this.query = query;
+        }
+
+        public String getClassName() {
+            return className;
+        }
+
+        public void setClassName(String className) {
+            this.className = className;
+        }
+
+        public Context getActContext() {
+            return mContext;
+        }
+
+        public void setActContext(Context mContext) {
+            this.mContext = mContext;
+        }
+
+        public int getTaskID() {
+            return taskID;
+        }
+
+        public void setTaskID(int taskID) {
+            this.taskID = taskID;
+        }
+
+        public ReqTask(String query, String className, Context context){
+            setTaskID(this.taskID);//set unique ID for task
             setQuery(query);
             setClassName(className);
             Log.d("Variable", "ReqTask" + getTaskID() + " context value: " + context);
             setActContext(context);
-            Log.d("Variable", "ReqTask" + getTaskID() + " getActContext() value: " + getActContext());
             taskID++;
         }
-
-        ProgressDialog dialog;
 
         @Override
         protected void onPreExecute() {
@@ -103,7 +98,7 @@ public class queryreqresp{
             StringBuilder total = new StringBuilder();
             try {
                 HttpPost httptemp = new HttpPost(getQuery());//form http req string and assign to httppost
-                Log.d("Variable", getClassName() + ".java - httpstringcreate() result: " + getQuery());
+                Log.d("Variable", getClassName() + ".java - query input result: " + getQuery());
                 httppost = httptemp;
                 // Execute HTTP Post Request
 
@@ -117,7 +112,6 @@ public class queryreqresp{
 
                 BufferedReader r = new BufferedReader(new InputStreamReader(is));
 
-                //StringBuilder total = new StringBuilder();
                 String line;
                 while ((line = r.readLine()) != null) {
                     total.append(line);
@@ -140,4 +134,4 @@ public class queryreqresp{
             setResult(result);//store the result
         }
     }//end of ReqTask
-}
+
