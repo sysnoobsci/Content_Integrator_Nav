@@ -52,9 +52,8 @@ public class XmlParser {
     }
 
     public String parseXMLfunc(String xmlstring)
-            throws XmlPullParserException, IOException
+            throws XmlPullParserException, IOException{
 
-    {
         List<String> listOfTextTags = new ArrayList<String>();//a list contain all the text inside XML tags
         XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
         factory.setNamespaceAware(true);

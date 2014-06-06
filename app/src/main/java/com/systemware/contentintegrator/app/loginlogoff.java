@@ -134,26 +134,14 @@ public class loginlogoff {
         }
     }
 
-    public void login() throws InterruptedException, ExecutionException, TimeoutException, NoSuchMethodException {
-        loginlogoff liloobj = new loginlogoff(mContext);
-
-        queryreqresp.ReqTask reqobj = new queryreqresp.ReqTask(liloobj.httpstringcreate(),
-                this.getClass().getName(), mContext);
-        if (reqobj.getStatus().equals(AsyncTask.Status.PENDING)) {//if task has not executed yet, execute
-            Log.d("Message", "loginDialog() task status:" + reqobj.getStatus());
-            reqobj.execute();
-            Log.d("Message", "loginDialog() task running...");
-        }
-    }//end of login()
-
     void logonMessage(){
         String toastMessage;
         isLoginSuccessful();//check if login was successful
         if (!getLogin_successful()) {
-            toastMessage = "Logon Failed";
+            toastMessage = "Logon Failed.";
         }
         else {
-            toastMessage = "Logon Successful";
+            toastMessage = "Logon Successful.";
         }
         ToastMessageTask tmtask = new ToastMessageTask(mContext,toastMessage);
         tmtask.execute();
