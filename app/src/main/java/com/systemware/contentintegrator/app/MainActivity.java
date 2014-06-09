@@ -47,12 +47,22 @@ public class MainActivity extends Activity
     private CharSequence mTitle;
     Dialog loginDialog = null;
     Context maContext = MainActivity.this;
+    ArrayList<String> logonXmlTextTags;
+    Bundle bundle1 = new Bundle();
     final static private int LOGIN_TIMEOUT = 500;//time in milliseconds for login attempt to timeout
     final static private int REQUEST_TIMEOUT = 500;
 
     private Boolean first_open = true;//keeps track of if the app is opening for the first time to show the home screen
 
     ProgressDialog progress;
+
+    public ArrayList<String> getLogonXmlTextTags() {
+        return logonXmlTextTags;
+    }
+
+    public void setLogonXmlTextTags(ArrayList<String> logonXmlTextTags) {
+        this.logonXmlTextTags = logonXmlTextTags;
+    }
 
     public Boolean getFirst_open() {
         return first_open;
@@ -119,6 +129,12 @@ public class MainActivity extends Activity
                                 this.getClass().getName(), maContext);
                         try {
                             reqobj.execute().get(LOGIN_TIMEOUT, TimeUnit.MILLISECONDS);
+                            XmlParser xobj3 = new XmlParser();
+                            xobj3.parseXMLfunc(reqobj.getResult());
+                            setLogonXmlTextTags(xobj3.getTextTag());
+                            Bundle bundle1 = new Bundle();
+                            bundle1.putStringArrayList("xmllogon",getLogonXmlTextTags());
+                            //fragment.setArguments
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         } catch (ExecutionException e) {
@@ -126,6 +142,10 @@ public class MainActivity extends Activity
                         } catch (TimeoutException e) {
                             ToastMessageTask tmtask = new ToastMessageTask(maContext,"Logon attempt timed out.");
                             tmtask.execute();
+                            e.printStackTrace();
+                        } catch (XmlPullParserException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
                             e.printStackTrace();
                         }
                         MainActivity.this.runOnUiThread(new Runnable() {
@@ -185,7 +205,7 @@ public class MainActivity extends Activity
                         this.getClass().getName(), maContext);
                 try {
                     reqobj.execute().get(REQUEST_TIMEOUT,TimeUnit.MILLISECONDS);//wait for reqobj to finish before continuing
-                    Log.d("Message","reqobj task ran...");
+                    Log.d("Message", "reqobj task ran...");
                     Log.d("Variable", "reqobj.getResult()" + reqobj.getResult());
                     xobj.parseXMLfunc(reqobj.getResult());//parse result from query
                     reqobj2.execute().get(REQUEST_TIMEOUT,TimeUnit.MILLISECONDS);//wait for reqobj2 to finish before continuing
@@ -207,13 +227,13 @@ public class MainActivity extends Activity
                     @Override
                     public void run() {
                         Log.d("Message", "UI thread running...");
-                        List<String> listOfTextTags;
+                        ArrayList<String> listOfTextTags;
                         listOfTextTags = xobj.getTextTag();
                         ciservername.setText(listOfTextTags.get(3));
                         civersion.setText(listOfTextTags.get(4));
                         cinodename.setText(listOfTextTags.get(5));
 
-                        List<String> listOfTextTags2;
+                        ArrayList<String> listOfTextTags2;
                         listOfTextTags2 = xobj2.getTextTag();
                         Iterator<String> it = listOfTextTags2.iterator();
                         while(it.hasNext())
@@ -237,7 +257,7 @@ public class MainActivity extends Activity
         // update the main content by replacing fragments
         Log.d("Variable", "Value of argument position: " + position);
         Fragment fragment = new Home_Fragment();
-        if(first_open){//if first time opening app, show home screen fragment
+        if(getFirst_open()){//if first time opening app, show home screen fragment
             position = -1;
             setFirst_open(false);
         }

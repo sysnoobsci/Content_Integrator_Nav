@@ -23,7 +23,7 @@ public class XmlParser {
 
     private final static String EMPTY_STRING = "";
 
-    List<String> textTag = new ArrayList<String>();
+    ArrayList<String> textTag = new ArrayList<String>();
 
     public String getXmlstring() {
         return xmlstring;
@@ -43,18 +43,18 @@ public class XmlParser {
         this.is_xml = is_xml;
     }
 
-    public List<String> getTextTag() {
+    public ArrayList<String> getTextTag() {
         return textTag;
     }
 
-    public void setTextTag(List<String> textTag) {
+    public void setTextTag(ArrayList<String> textTag) {
         this.textTag = textTag;
     }
 
     public String parseXMLfunc(String xmlstring)
             throws XmlPullParserException, IOException{
 
-        List<String> listOfTextTags = new ArrayList<String>();//a list contain all the text inside XML tags
+        ArrayList<String> listOfTextTags = new ArrayList<String>();//a list contain all the text inside XML tags
         XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
         factory.setNamespaceAware(true);
         XmlPullParser xpp = factory.newPullParser();
