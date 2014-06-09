@@ -185,8 +185,12 @@ public class MainActivity extends Activity
                         this.getClass().getName(), maContext);
                 try {
                     reqobj.execute().get(REQUEST_TIMEOUT,TimeUnit.MILLISECONDS);//wait for reqobj to finish before continuing
+                    Log.d("Message","reqobj task ran...");
+                    Log.d("Variable", "reqobj.getResult()" + reqobj.getResult());
                     xobj.parseXMLfunc(reqobj.getResult());//parse result from query
                     reqobj2.execute().get(REQUEST_TIMEOUT,TimeUnit.MILLISECONDS);//wait for reqobj2 to finish before continuing
+                    Log.d("Message","reqobj2 task ran...");
+                    Log.d("Variable", "reqobj2.getResult()" + reqobj2.getResult());
                     xobj2.parseXMLfunc(reqobj2.getResult());
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -199,10 +203,10 @@ public class MainActivity extends Activity
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
                 MainActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        Log.d("Message", "UI thread running...");
                         List<String> listOfTextTags;
                         listOfTextTags = xobj.getTextTag();
                         ciservername.setText(listOfTextTags.get(3));

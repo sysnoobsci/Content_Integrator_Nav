@@ -126,12 +126,12 @@ import java.io.InputStreamReader;
             if (!xmlobj.isXMLformat(total.toString())) {
                 Log.e("XMLFormatError", getClassName() + ".java - XML is malformed");
             }
+            setResult(total.toString());
             return total.toString();
         }
 
         protected void onPostExecute(String result) {
             Log.d("Variable", "Task Executed from " + this.getClass().getName() + " + result: " + result);
-            setResult(result);//store the result
         }
     }//end of ReqTask
 
