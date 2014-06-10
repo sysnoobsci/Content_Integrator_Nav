@@ -79,6 +79,7 @@ public class XmlParser {
         //total.append("End document\n");
         setTextTag(listOfTextTags);
         setXmlstring(total.toString());
+        Log.d("XML", "Contents of XML Response: " + getXmlstring());
         return total.toString();//return parsed contents of XML
     }
 

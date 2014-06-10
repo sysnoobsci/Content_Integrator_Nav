@@ -48,7 +48,7 @@ public class MainActivity extends Activity
     Dialog loginDialog = null;
     Context maContext = MainActivity.this;
     ArrayList<String> logonXmlTextTags;
-    Bundle bundle1 = new Bundle();
+    Bundle bundle2 = new Bundle();
     final static private int LOGIN_TIMEOUT = 500;//time in milliseconds for login attempt to timeout
     final static private int REQUEST_TIMEOUT = 500;
 
@@ -129,29 +129,35 @@ public class MainActivity extends Activity
                                 this.getClass().getName(), maContext);
                         try {
                             reqobj.execute().get(LOGIN_TIMEOUT, TimeUnit.MILLISECONDS);
-                            XmlParser xobj3 = new XmlParser();
-                            xobj3.parseXMLfunc(reqobj.getResult());
-                            setLogonXmlTextTags(xobj3.getTextTag());
-                            Bundle bundle1 = new Bundle();
-                            bundle1.putStringArrayList("xmllogon",getLogonXmlTextTags());
-                            //fragment.setArguments
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         } catch (ExecutionException e) {
                             e.printStackTrace();
                         } catch (TimeoutException e) {
-                            ToastMessageTask tmtask = new ToastMessageTask(maContext,"Logon attempt timed out.");
+                            ToastMessageTask tmtask = new ToastMessageTask(maContext, "Logon attempt timed out.");
                             tmtask.execute();
-                            e.printStackTrace();
-                        } catch (XmlPullParserException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
                             e.printStackTrace();
                         }
                         MainActivity.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 progress.dismiss();
+                                XmlParser xobj3 = new XmlParser();
+                                try {
+                                    xobj3.parseXMLfunc(reqobj.getResult());
+                                } catch (XmlPullParserException e) {
+                                    e.printStackTrace();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                                Log.d("Variable","reqobj.getResult() value is: " + reqobj.getResult());
+                                setLogonXmlTextTags(xobj3.getTextTag());
+                                try {
+                                    Home_Fragment.setText(getLogonXmlTextTags().get(5) + ", you were last here\n " + getLogonXmlTextTags().get(7));
+                                }
+                                catch(IndexOutOfBoundsException iobe){
+                                    Log.e("Error",iobe.toString());
+                                }
                                 loginlogoff lobj = new loginlogoff(maContext);
                                 lobj.isLoginSuccessful(reqobj);//check if login was successful
                                 lobj.logonMessage(reqobj);//show status of login
@@ -183,7 +189,7 @@ public class MainActivity extends Activity
         final String aboutQuery = "?action=about";
         final String aboutQueryFeatures = "?action=about&opt=features";
         final Dialog aboutDialog = new Dialog(this);
-        final List<String> listFeature = new ArrayList<String>();
+        final ArrayList<String> listFeature = new ArrayList<String>();
         aboutDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         // Create about dialog
         aboutDialog.setContentView(R.layout.about_dialog);
@@ -274,6 +280,7 @@ public class MainActivity extends Activity
                 break;
             default:
                 fragment = new Home_Fragment();
+                fragment.setArguments(bundle2);//provide the StringArrayList to the home fragment
                 break;
         }
         fragmentManager.beginTransaction()

@@ -17,6 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="WELCOME TO SYSTEMWARE"
+            android:typeface="sans"
             android:id="@+id/textView"
             android:layout_gravity="center_horizontal"
             android:textSize="25sp"
@@ -35,9 +36,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="User, you were last here time/date"
+            android:typeface="sans"
             android:id="@+id/textView2"
             android:textSize="22sp"
-            android:layout_alignParentEnd="true"
             android:layout_gravity="center_horizontal" />
     </LinearLayout>
 
