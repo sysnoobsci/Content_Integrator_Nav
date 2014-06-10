@@ -50,6 +50,7 @@ public class MainActivity extends Activity
     ArrayList<String> logonXmlTextTags;
     Bundle bundle2 = new Bundle();
     final static private int LOGIN_TIMEOUT = 500;//time in milliseconds for login attempt to timeout
+    final static private int LOGOFF_TIMEOUT = 500;//time in milliseconds for logoff attempt to timeout
     final static private int REQUEST_TIMEOUT = 500;
 
     private Boolean first_open = true;//keeps track of if the app is opening for the first time to show the home screen
@@ -153,7 +154,13 @@ public class MainActivity extends Activity
                                 Log.d("Variable","reqobj.getResult() value is: " + reqobj.getResult());
                                 setLogonXmlTextTags(xobj3.getTextTag());
                                 try {
-                                    Home_Fragment.setText(getLogonXmlTextTags().get(5) + ", you were last here\n " + getLogonXmlTextTags().get(7));
+                                    ArrayList <String> dateTime = new ArrayList<String>();
+                                    Log.d("Variable", "getLogonXmlTextTags().get(5) value: " + getLogonXmlTextTags().get(5));
+                                    dateTime.add(getLogonXmlTextTags().get(5));
+                                    dateTime.add(", you were last here\n");
+                                    dateTime.add(getLogonXmlTextTags().get(7));
+                                    dateTime.add(getLogonXmlTextTags().get(6));
+                                    Home_Fragment.setText(dateTime);
                                 }
                                 catch(IndexOutOfBoundsException iobe){
                                     Log.e("Error",iobe.toString());
@@ -280,7 +287,6 @@ public class MainActivity extends Activity
                 break;
             default:
                 fragment = new Home_Fragment();
-                fragment.setArguments(bundle2);//provide the StringArrayList to the home fragment
                 break;
         }
         fragmentManager.beginTransaction()
@@ -325,7 +331,7 @@ public class MainActivity extends Activity
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(final MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -349,6 +355,32 @@ public class MainActivity extends Activity
             }
             return true;
         }
+        if(id == R.id.action_logoff) {
+            final loginlogoff liloobj2 = new loginlogoff(maContext);
+            new Thread(new Runnable() {
+                public void run() {
+                    ReqTask reqobj4 = new ReqTask(liloobj2.logoffQuery(), this.getClass().getName(), maContext);
+                    XmlParser xobj4 = new XmlParser();
+                    try {
+                        reqobj4.execute().get(LOGOFF_TIMEOUT,TimeUnit.MILLISECONDS);
+                        xobj4.parseXMLfunc(reqobj4.getResult());
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    } catch (TimeoutException e) {
+                        e.printStackTrace();
+                    } catch (XmlPullParserException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    liloobj2.isLogoffSuccessful(xobj4.getTextTag());
+                    liloobj2.logoffMessage();
+                }
+            }).start();
+        }
+
         return super.onOptionsItemSelected(item);
     }
 

@@ -22,11 +22,17 @@ public class Home_Fragment extends Fragment {
         rootView = inflater .inflate(R.layout.home_fragment, container, false);
         return rootView;
     }
-    public static void setText(String text){
+    public static void setText(ArrayList <String> dateTime){
         TextView textView = (TextView) rootView.findViewById(R.id.textView2);
-        String month = text.substring(4,5);
-        String day = text.substring(6,7);
-        String year = text.substring(0,3);
-        textView.setText(month + "-" + day + "-" + year);
+        TextView textView2 = (TextView) rootView.findViewById(R.id.textView3);
+        String month = dateTime.get(2).substring(4,6);
+        String day = dateTime.get(2).substring(6,8);
+        String year = dateTime.get(2).substring(0,4);
+        String hour = dateTime.get(2).substring(8,10);
+        String minute = dateTime.get(2).substring(10,12);
+        String second = dateTime.get(2).substring(12,14);
+        textView.setText(dateTime.get(0) + ", you were last here\n" + month + "/" + day + "/" + year
+                    + "  " + hour + ":" + minute + ":" + second + ".");
+        textView2.setText(dateTime.get(0) + " - " + "(" + dateTime.get(3) + ")");
     }
 }

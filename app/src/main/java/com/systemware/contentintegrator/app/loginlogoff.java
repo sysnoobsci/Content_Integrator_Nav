@@ -23,6 +23,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -48,6 +49,7 @@ public class loginlogoff {
     private static String LogonRes = "";
     private static Boolean connection_state = false;
     private static Boolean login_successful = false;
+    private static Boolean logoff_successful = false;
 
     public String getHostname() {
         return hostname;
@@ -113,6 +115,13 @@ public class loginlogoff {
         loginlogoff.login_successful = login_successful;
     }
 
+    public static Boolean getLogoff_successful() {
+        return logoff_successful;
+    }
+
+    public static void setLogoff_successful(Boolean logoff_successful) {
+        loginlogoff.logoff_successful = logoff_successful;
+    }
 
     protected String httplogonreq() {
         String httpstr = "?action=logon&user=" + getUsername() + "&password=" + getPassword();
@@ -144,6 +153,33 @@ public class loginlogoff {
         }
         ToastMessageTask tmtask = new ToastMessageTask(mContext,toastMessage);
         tmtask.execute();
+    }
+
+    String logoffQuery(){
+        String targetCIQuery = "http://" + getHostname() + "." +
+                getDomain() + ":" + getPortnumber() + "/ci";
+        String logoffQuery = "?action=logoff";
+        return targetCIQuery + logoffQuery;
+    }
+
+    void isLogoffSuccessful(ArrayList<String> larray){
+        if(larray.get(0).equals("0") && larray.get(1).equals("0") && larray.get(2).equals("0")){
+            setLogoff_successful(true);
+        }
+        else{
+            setLogoff_successful(false);
+        }
+    }
+
+    void logoffMessage(){
+        if(getLogoff_successful()){
+            ToastMessageTask tmtask = new ToastMessageTask(mContext, "Successfully logged off.");
+            tmtask.execute();
+        }
+        else{
+            ToastMessageTask tmtask = new ToastMessageTask(mContext, "Problem logging off.");
+            tmtask.execute();
+        }
     }
 
     private void isNetworkAvailable() {
