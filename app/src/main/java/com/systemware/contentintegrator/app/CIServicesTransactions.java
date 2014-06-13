@@ -84,5 +84,20 @@ public class CIServicesTransactions {
         return targetCIQuery() + downloadQuery;
     }
     //export
+    String exportQuery(String tplid){
+        String exportQuery = "?action=export" + qf.formQuery(tplid);
+        return targetCIQuery() + exportQuery;
+    }
+    //generateflattopicDDL
+    String generateflattopicDDLQuery(String dbtype,String camid,String otid,String allotids,
+                                String topicdefxml,String schema,String dbname,String inline){
+        String generateflattopicDDLQuery = "?action=generateflattopicDDL" + qf.formQuery(dbtype,camid,otid,
+                allotids,topicdefxml,schema,dbname,inline);
+        return targetCIQuery() + generateflattopicDDLQuery;
+    }
+    //import    ***LOOK AT THIS AGAIN***
+    String importQuery(String tplid,String serverfilename,String csvskipheader,String skipheader){
+        String importQuery
+    }
 
 }
