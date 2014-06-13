@@ -13,10 +13,6 @@ public class ContentServer {
         this.mContext = mContext;
     }
 
-//all variables that can go into queries
-
-
-
     //Content Server API queries
 
     String targetCIQuery(){
@@ -40,16 +36,27 @@ public class ContentServer {
         String listDirQuery = "?action=listdirectory" + qf.formQuery(res,xid,maxseg,offset);
         return targetCIQuery() + listDirQuery;
     }
+    //listglobalindex
     String listglobalindexQuery(String opt,String xid,String gix,String xvn,String xv,
                                 String xve, String sdate, String edate, String max, String res,
                                 String title,String alternate, String order){
         String listgixQuery = "?action=listgix" + qf.formQuery(opt,xid,gix,xvn,xv,xve,sdate,edate,max,res,title,alternate,order);
         return targetCIQuery() + listgixQuery;
     }
+    //listindex
+    String listindexQuery(String opt, String xid, String DSID, String xname){
+        String listgixQuery = "?action=listgix" + qf.formQuery(opt,xid,DSID,xname);
+        return targetCIQuery() + listgixQuery;
+    }
     //listnode
     String listNodeQuery(){
         String listNodeQuery = "?action=listnode";
         return targetCIQuery() + listNodeQuery;
+    }
+    //listversion
+    String listversionQuery(String res, String xid, String maxseg, String offset, String sdate){
+        String listversionQuery = "?action=listversion" + qf.formQuery();
+        return targetCIQuery() + listversionQuery;
     }
 
 
