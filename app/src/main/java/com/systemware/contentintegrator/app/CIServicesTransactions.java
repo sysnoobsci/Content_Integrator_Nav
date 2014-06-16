@@ -47,7 +47,7 @@ public class CIServicesTransactions {
     }
     //combine
     String combineQuery(String tid,String opt,String inline){
-        String combineQuery = "?action=combine" + qf.formQuery(tid,opt,inline);
+        String combineQuery = "?action=combine" + qf.formQuery(tid, opt, inline);
         return targetCIQuery() + combineQuery;
     }
     //createtopic     ***LOOK AT THIS ONE AGAIN***
@@ -97,7 +97,85 @@ public class CIServicesTransactions {
     }
     //import    ***LOOK AT THIS AGAIN***
     String importQuery(String tplid,String serverfilename,String csvskipheader,String skipheader){
-        String importQuery
+        String importQuery = "?action=import" + qf.formQuery(tplid,serverfilename,csvskipheader,skipheader);
+        return targetCIQuery() + importQuery;
+    }
+    //listtemplate
+    String listtemplateQuery(String opt, String tid){
+        String listtemplateQuery = "?action=listtemplate" + qf.formQuery(opt,tid);
+        return targetCIQuery() + listtemplateQuery;
+    }
+    //listwq
+    String listwqQuery(String otid,String xid){
+        String listwqQuery = "?action=listwq" + qf.formQuery(otid,xid);
+        return targetCIQuery() + listwqQuery;
+    }
+    //logoff
+    String logoffQuery(){
+        String logoffQuery = "?action=logoff";
+        return logoffQuery;
+    }
+    //logon
+    String logonQuery(String user,String password,String newpwd){
+        String logonQuery = "?action=logon" + qf.formQuery(user,password,newpwd);
+        return targetCIQuery() + logonQuery;
+    }
+    //ping
+    String pingQuery(){
+        String pingQuery = "?action=ping";
+        return targetCIQuery() + pingQuery;
+    }
+    //readtopic
+    String readtopicQuery(String tid,String opt) {
+        String readtopicQuery = "?action=readtopic" + qf.formQuery(tid, opt);
+        return targetCIQuery() + readtopicQuery;
+    }
+    //readuserattribute       ***LOOK AT THIS AGAIN***
+    String readuserattributeQuery(String name, String list, String attr){
+        String readuserattributeQuery = "?action=readuserattribute" + qf.formQuery(name,list,attr);
+        return targetCIQuery() + readuserattributeQuery;
+    }
+    //restore
+    String restoreQuery(String DSID,String tid, String xid, String opt){
+        String restoreQuery = "?action=restore" + qf.formQuery(DSID, tid, xid, opt);
+        return targetCIQuery() + restoreQuery;
+    }
+    //retrieve  ***LOOK AT THIS AGAIN***
+    String retrieveQuery(String mode, String tid, String DSID, String xid, String tplid,String fmt,
+                         String combtype,String maxseg,String offset,String axvs,String label,
+                         String inline,String tq,String sln){
+        String retrieveQuery = "?action=retrieve" + qf.formQuery();
+        return targetCIQuery() + retrieveQuery;
+    }
+    //runsavedsearch
+    String runsavedsearchQuery(String query,String gridout,String maxseg,String offset){
+        String runsavedsearchQuery = "?action=runsavedsearch" + qf.formQuery(query,gridout,maxseg,offset);
+        return targetCIQuery() + runsavedsearchQuery;
+    }
+    //savesearch
+    String savesearchQuery(String label, String tplid, String nvpair){
+        String savesearchQuery = "?action=ssavesearch" + qf.formQuery(label,tplid,nvpair);
+        return targetCIQuery() + savesearchQuery;
+    }
+    //saveuserattribute
+    String saveuserattributeQuery(String name, String value, String encrypt,String list,
+                                  String attrsuffix,String valuesuffix,String encryptsuffix){
+        String saveuserattributeQuery = "?action=saveuserattribute" + qf.formQuery(name,value,encrypt,
+                list,attrsuffix,valuesuffix,encryptsuffix);
+        return targetCIQuery() + saveuserattributeQuery;
+    }
+    //search
+    String searchQuery(String tplid,String nvpairs,String any,String gridout,String maxseg,
+                       String wq, String offset, String orderby,String savehistory,String xreport,
+                       String dlvtplid,String tid){
+        String searchQuery = "?action=search" + qf.formQuery(tplid,nvpairs,any,gridout,maxseg,wq,
+                offset,orderby,savehistory,xreport,dlvtplid,tid);
+        return targetCIQuery() + searchQuery;
+    }
+    //updatetopic
+    String updatetopicQuery(String tplid,String tid,String nvpairs, String detail){
+        String updatetopicQuery = "?action=updatetopic" + qf.formQuery(tplid,tid,nvpairs,detail);
+        return targetCIQuery() + updatetopicQuery;
     }
 
 }
