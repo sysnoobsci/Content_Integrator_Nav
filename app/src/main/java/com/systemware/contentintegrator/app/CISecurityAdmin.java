@@ -195,8 +195,7 @@ public class CISecurityAdmin {
         return targetCIQuery() + saveuserQuery;
     }
     //synccsuserprofile
-    //String synccsuserprofileQuery
-
+    String synccsuserprofileQuery(String syncaction,String targetxids,String excludexids,String ignoreerrors,String use)
 
 
 
