@@ -19,6 +19,7 @@ import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -32,7 +33,9 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -262,6 +265,8 @@ public class MainActivity extends Activity
                         }
                         ArrayAdapter adapter = new ArrayAdapter<String>(MainActivity.this,R.layout.list_item, listFeature);
                         featureList.setAdapter(adapter);
+
+
                         aboutDialog.show();
                     }
                 });//end of UiThread

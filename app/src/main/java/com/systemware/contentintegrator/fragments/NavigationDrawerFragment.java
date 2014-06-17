@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
@@ -21,10 +22,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.systemware.contentintegrator.app.ExpandableListAdapter;
 import com.systemware.contentintegrator.app.R;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
@@ -52,10 +59,17 @@ public class NavigationDrawerFragment extends Fragment {
     /**
      * Helper component that ties the action bar to the navigation drawer.
      */
+
+
+    ExpandableListAdapter listAdapter;
+    ExpandableListView mDrawerListView;
+    List<String> listDataHeader;
+    HashMap<String, List<String>> listDataChild;
+
     private ActionBarDrawerToggle mDrawerToggle;
 
     private DrawerLayout mDrawerLayout;
-    private ListView mDrawerListView;
+    //private ListView mDrawerListView;
     private View mFragmentContainerView;
 
     private int mCurrentSelectedPosition = 0;
@@ -97,15 +111,15 @@ public class NavigationDrawerFragment extends Fragment {
 
 
 
-        mDrawerListView = (ListView) inflater.inflate(
+        mDrawerListView = (ExpandableListView) inflater.inflate(
                 R.layout.fragment_navigation_drawer, container, false);
-        mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+/*        mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 selectItem(position);
             }
-        });
-        mDrawerListView.setAdapter(new ArrayAdapter<String>(
+        });*/
+/*        mDrawerListView.setAdapter(new ArrayAdapter<String>(
                 getActionBar().getThemedContext(),
                 android.R.layout.simple_list_item_activated_1,
                 android.R.id.text1,
@@ -114,8 +128,92 @@ public class NavigationDrawerFragment extends Fragment {
                         getString(R.string.title_section3),
                         getString(R.string.title_section4),
                 }));
-        mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
+        mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);*/
+
+        // preparing list data
+        prepareListData();
+
+        listAdapter = new ExpandableListAdapter(getActivity(), listDataHeader, listDataChild);
+
+        // setting list adapter
+        mDrawerListView.setAdapter(listAdapter);
+        // Listview on child click listener
+        mDrawerListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v,
+                                        int groupPosition, int childPosition, long id) {
+                Fragment fragment = new Home_Fragment();
+                FragmentManager fragmentManager = getFragmentManager();
+                switch(groupPosition) {
+                    case 0:
+                        switch (childPosition) {
+                            case 0:
+                                fragment = new Find_Fragment();
+                                break;
+                            case 1:
+                                fragment = new Find_Fragment();
+                                break;
+                        }
+                        break;
+                    case 1:
+                        switch (childPosition) {
+                            case 0:
+                                fragment = new Tools_Fragment();
+                                break;
+                            case 1:
+                                fragment = new Tools_Fragment();
+                                break;
+                        }
+                        break;
+                    case 2:
+                        switch (childPosition) {
+                            case 0:
+                                fragment = new Admin_Fragment();
+                                break;
+                            case 1:
+                                fragment = new Admin_Fragment();
+                                break;
+                        }
+                        break;
+                }
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, fragment)
+                                //.replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
+                        .commit();
+                return false;
+            }
+        });
+
         return mDrawerListView;
+    }
+
+    private void prepareListData() {
+
+        listDataHeader = new ArrayList<String>();
+        listDataChild = new HashMap<String, List<String>>();
+
+        //Header like Find, about...etc.  Call command and put it here
+        listDataHeader.add("Find");
+        listDataHeader.add("Tools");
+        listDataHeader.add("Admin");
+
+        //Populate Find here with the submenu
+        List<String> find = new ArrayList<String>();
+        find.add("fawk");
+        find.add("man");
+        //Populate Tools here with the submenu
+        List<String> tools = new ArrayList<String>();
+        tools.add("fawk");
+        tools.add("man");
+        //Populate Admin here with the submenu
+        List<String> admin = new ArrayList<String>();
+        admin.add("fawk");
+        admin.add("man");
+
+        listDataChild.put(listDataHeader.get(0), find);
+        listDataChild.put(listDataHeader.get(1), tools);
+        listDataChild.put(listDataHeader.get(2), admin);
     }
 
     public boolean isDrawerOpen() {
