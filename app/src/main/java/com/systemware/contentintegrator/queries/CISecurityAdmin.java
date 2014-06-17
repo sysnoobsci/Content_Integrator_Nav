@@ -1,6 +1,9 @@
-package com.systemware.contentintegrator.app;
+package com.systemware.contentintegrator.queries;
 
 import android.content.Context;
+
+import com.systemware.contentintegrator.app.QueryFormer;
+import com.systemware.contentintegrator.app.loginlogoff;
 
 /**
  * Created by adrian.meraz on 6/16/2014.

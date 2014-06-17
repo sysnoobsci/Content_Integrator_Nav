@@ -1,10 +1,12 @@
-package com.systemware.contentintegrator.app;
+package com.systemware.contentintegrator.fragments;
 
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.systemware.contentintegrator.app.R;
 
 /**
  * Created by The Bat Cave on 6/2/2014.
