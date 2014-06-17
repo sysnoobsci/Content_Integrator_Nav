@@ -1,39 +1,20 @@
 package com.systemware.contentintegrator.app;
 
 import android.content.Context;
-
 /**
  * Created by adrian.meraz on 6/10/2014.
  * XML API services for content servers
  */
 public class ContentServer {
     Context mContext;
-    private String _DSID = "";//default DSID of a report
-    private int _xid = 0;//default Content Server id
-    private String _res = "";//default report path
-    private int _version = 0;//default report version
-
+    QueryFormer qf = new QueryFormer();
+    //default variable values
     public ContentServer(Context mContext){
-        ContentServer.this.mContext = mContext;
+        this.mContext = mContext;
     }
 
+    //Content Server API queries
 
-    public ContentServer DSID(String DSID){
-        this._DSID = _DSID;
-        return this;
-    }
-    public ContentServer xid(int xid){
-        this._xid = _xid;
-        return this;
-    }
-    public ContentServer res(String res){
-        this._res = _res;
-        return this;
-    }
-    public ContentServer version(int _version){
-        this._version = _version;
-        return this;
-    }
     String targetCIQuery(){
         loginlogoff lilobj = new loginlogoff(mContext);
         String targetCIQuery = "http://" + lilobj.getHostname() + "." +
@@ -41,34 +22,41 @@ public class ContentServer {
         return targetCIQuery;
     }
     //deleteversion
-    String deleteDSIDQuery(String DSID,int xid, String res){
-        ContentServer query1 = new ContentServer(mContext).DSID(DSID).xid(xid).res(res);
-        String delverQuery;
-        if(res.equals(null) || res.isEmpty()){
-            delverQuery = "?action=deleteversion&xid=" + xid + "&dsid=" + DSID;
-            return delverQuery;
-        }
-        else {
-            delverQuery = "?action=deleteversion&res=" + res + "&xid=" + xid + "&dsid=" + DSID;
-            return targetCIQuery() + delverQuery;
-        }
-    }
-    String deleteVersionQuery(int version,int xid, String res){
-        String delverQuery;
-        delverQuery = "?action=deleteversion&res=" + res + "&xid=" + xid + "&version=" + version;
-        return targetCIQuery() + delverQuery;
+    String deleteDSIDQuery(String DSID,String xid, String res){
 
+        String delverQuery = "?action=deleteversion" + qf.formQuery(DSID,xid,res);
+        return targetCIQuery() + delverQuery;
+    }
+    String deleteVersionQuery(String version,String xid, String res){
+        String delverQuery = "?action=deleteversion" + qf.formQuery(version,xid,res);
+        return targetCIQuery() + delverQuery;
     }
     //listdirectory
-    String listdirQuery(String res, int xid, int maxseg, String offset){
-        String listDirQuery = "?action=listdirectory&res=" + res + "&xid=" +
-                xid + "&maxseg=" + maxseg + "&offset=" + offset;
-        return listDirQuery;
+    String listdirQuery(String res, String xid, String maxseg, String offset){
+        String listDirQuery = "?action=listdirectory" + qf.formQuery(res,xid,maxseg,offset);
+        return targetCIQuery() + listDirQuery;
+    }
+    //listglobalindex
+    String listglobalindexQuery(String opt,String xid,String gix,String xvn,String xv,
+                                String xve, String sdate, String edate, String max, String res,
+                                String title,String alternate, String order){
+        String listgixQuery = "?action=listgix" + qf.formQuery(opt,xid,gix,xvn,xv,xve,sdate,edate,max,res,title,alternate,order);
+        return targetCIQuery() + listgixQuery;
+    }
+    //listindex
+    String listindexQuery(String opt, String xid, String DSID, String xname){
+        String listgixQuery = "?action=listgix" + qf.formQuery(opt,xid,DSID,xname);
+        return targetCIQuery() + listgixQuery;
     }
     //listnode
     String listNodeQuery(){
         String listNodeQuery = "?action=listnode";
         return targetCIQuery() + listNodeQuery;
+    }
+    //listversion
+    String listversionQuery(String res, String xid, String maxseg, String offset, String sdate){
+        String listversionQuery = "?action=listversion" + qf.formQuery();
+        return targetCIQuery() + listversionQuery;
     }
 
 
