@@ -2,7 +2,6 @@ package com.systemware.contentintegrator.queries;
 
 import android.content.Context;
 
-import com.systemware.contentintegrator.app.QueryFormer;
 import com.systemware.contentintegrator.app.loginlogoff;
 
 /**
