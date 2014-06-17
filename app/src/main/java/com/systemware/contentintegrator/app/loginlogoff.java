@@ -41,11 +41,11 @@ public class loginlogoff {
         loginlogoff.this.mContext = mContext;
     }
 
-    private static String hostname = "gardner";
+    private static String hostname = "ameraz";
     private static String domain = "usa.systemware.com";
-    private static int portnumber = 34544;
+    private static int portnumber = 31000;
     private static String username = "admin";
-    private static String password = "admin";
+    private static String password = "password1";
     private static String LogonRes = "";
     private static Boolean connection_state = false;
     private static Boolean login_successful = false;

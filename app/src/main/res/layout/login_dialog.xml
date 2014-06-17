@@ -38,7 +38,7 @@
         android:id="@+id/hostname"
         android:layout_below="@+id/separator"
         android:layout_centerHorizontal="true"
-        android:text="meraz"
+        android:text="ameraz"
         android:textColor="@color/White"
         android:hint="Hostname"/>
 

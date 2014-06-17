@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:layout_width="320dp"
     android:layout_height="match_parent"
-    android:background="#2a5565">
+    android:background="#111111">
 
     <LinearLayout
         android:orientation="horizontal"
@@ -16,7 +16,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="32sp"
+            android:textSize="28sp"
             android:layout_margin="4dp"
             android:text="About"
             android:textColor="#999999"
@@ -26,26 +26,27 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:background="#999999"
+        android:layout_height="2dp"
+        android:background="#0099CC"
         android:layout_below="@id/title_layout"
         android:id="@+id/separator"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="32sp"
+        android:textSize="28sp"
         android:text="Features"
         android:textColor="#999999"
         android:id="@+id/features"
-        android:layout_below="@+id/tableLayout"
+        android:layout_margin="4dp"
+        android:layout_below="@+id/basic_info"
         android:layout_alignParentStart="true" />
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:background="#999999"
+        android:layout_height="2dp"
+        android:background="#0099CC"
         android:layout_below="@id/features"
         android:id="@+id/separator1"/>
 
@@ -54,95 +55,116 @@
         android:layout_height="wrap_content"
         android:id="@+id/features_list"
         android:layout_below="@+id/separator1"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:divider="#757575"
+        android:dividerHeight="1dp"/>
 
-    <TableLayout
+    <RelativeLayout
+        android:layout_height="wrap_content"
         android:layout_width="fill_parent"
-        android:layout_height="180dp"
-        android:id="@+id/tableLayout"
         android:layout_below="@+id/separator"
-        android:layout_alignParentStart="true">
+        android:id="@+id/basic_info">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CI Server Name"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:id="@+id/ci_servername_view"
+            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:gravity="center"
+            android:textColor="#999999"/>
 
-        <TableRow
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Imaserver"
+            android:id="@+id/ci_servername_placeholder"
+            android:layout_marginBottom="2dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:textColor="#999999"
+            android:layout_below="@id/ci_servername_view"/>
+
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
+            android:layout_height="1dp"
+            android:background="#757575"
+            android:layout_below="@id/ci_servername_placeholder"
+            android:id="@+id/separator2"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="CI Server Name"
-                android:id="@+id/ci_servername_view"
-                android:layout_margin="4dp"
-                android:textColor="#999999"
-                android:gravity="center|left"
-                android:paddingRight="45dp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="CI Version"
+            android:id="@+id/ci_version_view"
+            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:textColor="#999999"
+            android:layout_below="@id/ci_servername_placeholder"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_weight="1"
-                android:layout_height="50dp"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Imaserver"
-                android:id="@+id/ci_servername_placeholder"
-                android:layout_margin="4dp"
-                android:textColor="#999999"
-                android:gravity="center"/>
-        </TableRow>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="4.10.0317 20131205"
+            android:id="@+id/ci_version_placeholder"
+            android:layout_marginBottom="2dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:textColor="#999999"
+            android:layout_below="@id/ci_version_view"/>
 
-        <TableRow
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
+            android:layout_height="1dp"
+            android:background="#757575"
+            android:layout_below="@id/ci_version_placeholder"
+            android:id="@+id/separator3"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="CI Version"
-                android:id="@+id/ci_version_view"
-                android:layout_margin="4dp"
-                android:textColor="#999999"
-                android:gravity="center|left"
-                android:paddingRight="45dp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="CI Node Name"
+            android:id="@+id/ci_nodename_view"
+            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:textColor="#999999"
+            android:layout_below="@id/ci_version_placeholder"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_weight="1"
-                android:layout_height="50dp"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="4.10.0317 20131205"
-                android:id="@+id/ci_version_placeholder"
-                android:layout_margin="4dp"
-                android:textColor="#999999"
-                android:gravity="center"/>
-        </TableRow>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Imanode"
+            android:id="@+id/ci_nodename_placeholder"
+            android:layout_marginBottom="2dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:textColor="#999999"
+            android:layout_below="@id/ci_nodename_view"/>
 
-        <TableRow
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="CI Node Name"
-                android:id="@+id/ci_nodename_view"
-                android:layout_margin="4dp"
-                android:textColor="#999999"
-                android:gravity="center|left"
-                android:paddingRight="35dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_weight="1"
-                android:layout_height="50dp"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Imanode"
-                android:id="@+id/ci_nodename_placeholder"
-                android:layout_margin="4dp"
-                android:textColor="#999999"
-                android:gravity="center"/>
-        </TableRow>
-    </TableLayout>
+            android:layout_height="1dp"
+            android:background="#757575"
+            android:layout_below="@id/ci_nodename_placeholder"
+            android:id="@+id/separator4"/>
+        </RelativeLayout>
 
 </RelativeLayout>
