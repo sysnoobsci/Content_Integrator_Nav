@@ -1,4 +1,4 @@
-package com.systemware.contentintegrator.app;
+package com.systemware.contentintegrator.fragments;
 
 
 import android.app.Activity;
@@ -23,6 +23,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.systemware.contentintegrator.app.R;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.

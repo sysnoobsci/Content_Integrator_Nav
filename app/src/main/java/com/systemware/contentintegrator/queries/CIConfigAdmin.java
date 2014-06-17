@@ -1,6 +1,9 @@
-package com.systemware.contentintegrator.app;
+package com.systemware.contentintegrator.queries;
 
 import android.content.Context;
+
+import com.systemware.contentintegrator.app.QueryFormer;
+import com.systemware.contentintegrator.app.loginlogoff;
 
 /**
  * Created by adrian.meraz on 6/13/2014.
@@ -26,7 +29,7 @@ public class CIConfigAdmin {
     }
     //applyrule
     String applyruleQuery(String ruleset,String encode){
-        String applyruleQuery = "?action=applyrule" + qf.formQuery(ruleset,encode);
+        String applyruleQuery = "?action=applyrule" + qf.formQuery(ruleset, encode);
         return targetCIQuery() + applyruleQuery;
     }
     //audit

@@ -1,15 +1,19 @@
-package com.systemware.contentintegrator.app;
+package com.systemware.contentintegrator.queries;
 
 import android.content.Context;
+
+import com.systemware.contentintegrator.app.QueryFormer;
+import com.systemware.contentintegrator.app.loginlogoff;
+
 /**
  * Created by adrian.meraz on 6/10/2014.
  * XML API services for content servers
  */
-public class ContentServer {
+public class CIContentServer {
     Context mContext;
     QueryFormer qf = new QueryFormer();
     //default variable values
-    public ContentServer(Context mContext){
+    public CIContentServer(Context mContext){
         this.mContext = mContext;
     }
 

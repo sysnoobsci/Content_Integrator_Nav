@@ -6,4 +6,4 @@
     android:divider="@android:color/transparent"
     android:dividerHeight="0dp"
     android:background="#2a5565"
-    tools:context="com.systemware.contentintegrator.app.NavigationDrawerFragment" />
+    tools:context="com.systemware.contentintegrator.fragments.NavigationDrawerFragment" />

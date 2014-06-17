@@ -22,12 +22,17 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.systemware.contentintegrator.fragments.Admin_Fragment;
+import com.systemware.contentintegrator.fragments.Find_Fragment;
+import com.systemware.contentintegrator.fragments.Home_Fragment;
+import com.systemware.contentintegrator.fragments.NavigationDrawerFragment;
+import com.systemware.contentintegrator.fragments.Tools_Fragment;
+
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
