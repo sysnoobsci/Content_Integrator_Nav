@@ -195,7 +195,18 @@ public class CISecurityAdmin {
         return targetCIQuery() + saveuserQuery;
     }
     //synccsuserprofile
-    String synccsuserprofileQuery(String syncaction,String targetxids,String excludexids,String ignoreerrors,String use)
+    String synccsuserprofileQuery(String syncaction,String targetxids,String excludexids,
+                                  String ignoreerrors,String usecssessioncache,String nmask,
+                                  String minid,String maxid,String amask){
+        String synccsuserprofileQuery = "?action=synccsuserprofile" + qf.formQuery(syncaction,targetxids,
+                excludexids,ignoreerrors,usecssessioncache,nmask,minid,maxid,amask);
+        return targetCIQuery() + synccsuserprofileQuery;
+    }
+    //syncexternaluser
+    String syncexternaluserQuery(String username){
+        String syncexternaluserQuery = "?action=syncexternaluser" + qf.formQuery(username);
+        return targetCIQuery() + syncexternaluserQuery;
+    }
 
 
 
