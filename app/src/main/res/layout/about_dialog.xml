@@ -109,6 +109,7 @@
             android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
             android:textColor="#999999"
+            android:gravity="center_vertical"
             android:layout_below="@id/ci_servername_placeholder"/>
 
         <TextView
